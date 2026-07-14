@@ -1,0 +1,29 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Coverage
+*.out
+
+# Go build
+bin/
+
+# IDE
+.idea/
+.vscode/
+
+# Air
+tmp/
+
+# Environment
+.env
+
+# OS
+.DS_Store
+Thumbs.db
