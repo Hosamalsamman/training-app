@@ -2,6 +2,7 @@ package organizationtypes
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,23 +10,37 @@ import (
 var service = NewService()
 
 func ListOrganizationTypes(c *gin.Context) {
-	types, err := service.GetOrganizationTypes()
+
+	orgs, err := service.GetAll()
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, types)
+	c.JSON(http.StatusOK, orgs)
 }
 
 func GetOrganizationType(c *gin.Context) {
-	t, err := service.GetOrganizationType(c.Param("id"))
+
+	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Not Found"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid id",
+		})
+		return
+	}
+	org, err := service.GetByID(id)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Not Found",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, t)
+	c.JSON(http.StatusOK, org)
 }

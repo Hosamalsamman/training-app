@@ -10,10 +10,10 @@ func NewService() *Service {
 	}
 }
 
-func (s *Service) GetOrganizationTypes() ([]OrganizationType, error) {
-	return s.repo.GetAllOrganizationTypes()
+func (s *Service) GetAll() ([]OrganizationType, error) {
+	return s.repo.GetAll()
 }
 
-func (s *Service) GetOrganizationType(id string) (*OrganizationType, error) {
-	return s.repo.GetOrganizationTypeByID(id)
+func (s *Service) GetByID(id int) (*OrganizationType, error) {
+	return s.repo.GetByID(id)
 }

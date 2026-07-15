@@ -1,4 +1,4 @@
-package organizations
+package countries
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 
 var service = NewService()
 
-func ListOrganizations(c *gin.Context) {
+func ListCountries(c *gin.Context) {
 
 	orgs, err := service.GetAll()
 
@@ -23,7 +23,7 @@ func ListOrganizations(c *gin.Context) {
 	c.JSON(http.StatusOK, orgs)
 }
 
-func GetOrganization(c *gin.Context) {
+func GetCountry(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 

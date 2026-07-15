@@ -4,7 +4,7 @@ import "training-app/db"
 
 type Repository struct{}
 
-func (r Repository) GetAllOrganizationTypes() ([]OrganizationType, error) {
+func (r Repository) GetAll() ([]OrganizationType, error) {
 	var types []OrganizationType
 
 	err := db.DB.Find(&types).Error
@@ -12,7 +12,7 @@ func (r Repository) GetAllOrganizationTypes() ([]OrganizationType, error) {
 	return types, err
 }
 
-func (r Repository) GetOrganizationTypeByID(id string) (*OrganizationType, error) {
+func (r Repository) GetByID(id int) (*OrganizationType, error) {
 	var t OrganizationType
 
 	err := db.DB.First(&t, id).Error

@@ -15,7 +15,7 @@ func (r Repository) GetAll() ([]Organization, error) {
 	return orgs, err
 }
 
-func (r Repository) GetByID(id string) (*Organization, error) {
+func (r Repository) GetByID(id int) (*Organization, error) {
 
 	var org Organization
 

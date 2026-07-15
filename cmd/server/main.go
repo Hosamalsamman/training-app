@@ -2,6 +2,7 @@ package main
 
 import (
 	"training-app/db"
+	country "training-app/internal/countries"
 	organization "training-app/internal/organizations"
 	organizationtype "training-app/internal/organizationtypes"
 
@@ -32,6 +33,10 @@ func main() {
 	// organizations
 	r.GET("/organizations", organization.ListOrganizations)
 	r.GET("/organization/:id", organization.GetOrganization)
+
+	// countries
+	r.GET("/countries", country.ListCountries)
+	r.GET("/country/:id", country.GetCountry)
 
 	r.Run(":8000")
 }
