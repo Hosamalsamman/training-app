@@ -7,11 +7,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var service = NewService()
+type Handler struct {
+	service *Service
+}
 
-func ListCountries(c *gin.Context) {
+func NewHandler(service *Service) *Handler {
+	return &Handler{
+		service: service,
+	}
+}
 
-	orgs, err := service.GetAll()
+func (h *Handler) ListCountries(c *gin.Context) {
+
+	countries, err := h.service.GetAll()
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -20,10 +28,10 @@ func ListCountries(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, orgs)
+	c.JSON(http.StatusOK, countries)
 }
 
-func GetCountry(c *gin.Context) {
+func (h *Handler) GetCountry(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -33,7 +41,7 @@ func GetCountry(c *gin.Context) {
 		})
 		return
 	}
-	org, err := service.GetByID(id)
+	org, err := h.service.GetByID(id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{

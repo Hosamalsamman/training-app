@@ -1,21 +1,32 @@
 package organizationtypes
 
-import "training-app/db"
+import (
+	"training-app/internal/models"
+	"gorm.io/gorm"
+)
 
-type Repository struct{}
+type Repository struct{
+	db *gorm.DB
+}
 
-func (r Repository) GetAll() ([]OrganizationType, error) {
-	var types []OrganizationType
+func NewRepository(db *gorm.DB) *Repository {
+	return &Repository{
+		db: db,
+	}
+}
 
-	err := db.DB.Find(&types).Error
+func (r *Repository) GetAll() ([]models.OrganizationType, error) {
+	var types []models.OrganizationType
+
+	err := r.db.Find(&types).Error
 
 	return types, err
 }
 
-func (r Repository) GetByID(id int) (*OrganizationType, error) {
-	var t OrganizationType
+func (r *Repository) GetByID(id int) (*models.OrganizationType, error) {
+	var t models.OrganizationType
 
-	err := db.DB.First(&t, id).Error
+	err := r.db.First(&t, id).Error
 
 	if err != nil {
 		return nil, err

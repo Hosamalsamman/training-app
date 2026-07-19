@@ -1,27 +1,43 @@
 package organizations
 
-import "training-app/db"
+import (
+	"training-app/internal/models"
 
-type Repository struct{}
+	"gorm.io/gorm"
+)
 
-func (r Repository) GetAll() ([]Organization, error) {
+type Repository struct {
+	db *gorm.DB
+}
 
-	var orgs []Organization
+func NewRepository(db *gorm.DB) *Repository {
+	return &Repository{
+		db: db,
+	}
+}
 
-	err := db.DB.
-		Preload("OrganizationType").
-		Find(&orgs).Error
+func (r *Repository) GetAll() ([]models.Organization, error) {
+
+	var orgs []models.Organization
+
+	err := r.db.
+    Preload("Client").
+    Preload("OrganizationType").
+    Preload("Governorate").
+    Find(&orgs).Error
 
 	return orgs, err
 }
 
-func (r Repository) GetByID(id int) (*Organization, error) {
+func (r *Repository) GetByID(id int) (*models.Organization, error) {
 
-	var org Organization
+	var org models.Organization
 
-	err := db.DB.
-		Preload("OrganizationType").
-		First(&org, id).Error
+	err := r.db.
+	Preload("Client").
+    Preload("OrganizationType").
+    Preload("Governorate").
+	First(&org, id).Error
 
 	if err != nil {
 		return nil, err
