@@ -19,7 +19,10 @@ func NewHandler(service *Service) *Handler {
 
 func (h *Handler) ListOrganizations(c *gin.Context) {
 
-	orgs, err := h.service.GetAll()
+	// TODO: replace with c.MustGet("clientID").(int)
+	clientID := 2
+
+	orgs, err := h.service.GetAll(clientID)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -41,7 +44,10 @@ func (h *Handler) GetOrganization(c *gin.Context) {
 		})
 		return
 	}
-	org, err := h.service.GetByID(id)
+	// TODO: replace with c.MustGet("clientID").(int)
+	clientID := 2
+
+	org, err := h.service.GetByID(clientID, id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{

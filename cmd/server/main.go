@@ -5,6 +5,8 @@ import (
 	"training-app/internal/countries"
 	"training-app/internal/organizations"
 	"training-app/internal/organizationtypes"
+	"training-app/internal/clients"
+	"training-app/internal/governorates"
 
 	"github.com/gin-gonic/gin"
 
@@ -58,6 +60,22 @@ func main() {
 
 	r.GET("/countries", countryHandler.ListCountries)
 	r.GET("/country/:id", countryHandler.GetCountry)
+
+	// clients
+	clientRepo := clients.NewRepository(db.DB)
+	clientService := clients.NewService(clientRepo)
+	clientHandler := clients.NewHandler(clientService)
+
+	r.GET("/clients", clientHandler.ListClients)
+	r.GET("/client/:id", clientHandler.GetClient)
+
+	// governorates
+	govRepo := governorates.NewRepository(db.DB)
+	govService := governorates.NewService(govRepo)
+	govHandler := governorates.NewHandler(govService)
+
+	r.GET("/governorates", govHandler.ListClients)
+	r.GET("/governorate/:id", govHandler.GetClient)
 
 	r.Run(":8000")
 }

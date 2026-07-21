@@ -2,10 +2,11 @@ package organizationtypes
 
 import (
 	"training-app/internal/models"
+
 	"gorm.io/gorm"
 )
 
-type Repository struct{
+type Repository struct {
 	db *gorm.DB
 }
 
@@ -13,6 +14,14 @@ func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		db: db,
 	}
+}
+
+func (r *Repository) ForClient(clientID int) *Repository {
+
+	return &Repository{
+		db: r.db.Where("client_id = ?", clientID),
+	}
+
 }
 
 func (r *Repository) GetAll() ([]models.OrganizationType, error) {

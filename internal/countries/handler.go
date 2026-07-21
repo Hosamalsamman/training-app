@@ -19,7 +19,10 @@ func NewHandler(service *Service) *Handler {
 
 func (h *Handler) ListCountries(c *gin.Context) {
 
-	countries, err := h.service.GetAll()
+	// TODO: replace with c.MustGet("clientID").(int)
+	clientID := 2
+
+	countries, err := h.service.GetAll(clientID)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -41,7 +44,10 @@ func (h *Handler) GetCountry(c *gin.Context) {
 		})
 		return
 	}
-	org, err := h.service.GetByID(id)
+	// TODO: replace with c.MustGet("clientID").(int)
+	clientID := 2
+
+	country, err := h.service.GetByID(clientID, id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -50,5 +56,5 @@ func (h *Handler) GetCountry(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, org)
+	c.JSON(http.StatusOK, country)
 }

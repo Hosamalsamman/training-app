@@ -1,4 +1,4 @@
-package countries
+package clients
 
 import (
 	"training-app/internal/models"
@@ -22,17 +22,17 @@ func (r *Repository) ForClient(clientID int) *Repository {
 
 }
 
-func (r *Repository) GetAll() ([]models.Country, error) {
-	var countries []models.Country
-	err := r.db.Preload("Client").Find(&countries).Error
-	return countries, err
+func (r *Repository) GetAll() ([]models.Client, error) {
+	var clients []models.Client
+	err := r.db.Find(&clients).Error
+	return clients, err
 }
 
-func (r *Repository) GetByID(id int) (*models.Country, error) {
-	var country models.Country
-	err := r.db.Preload("Client").First(&country, id).Error
+func (r *Repository) GetByID(id int) (*models.Client, error) {
+	var client models.Client
+	err := r.db.First(&client, id).Error
 	if err != nil {
 		return nil, err
 	}
-	return &country, nil
+	return &client, nil
 }

@@ -6,6 +6,8 @@ type OrganizationType struct {
 
 	ClientID int    `gorm:"column:client_id;not null" json:"client_id"`
 	Client   Client `gorm:"foreignKey:ClientID" json:"client"`
+
+	Organizations []Organization `gorm:"foreignKey:OrganizationTypeID" json:"organizations,omitempty"`
 }
 
 func (OrganizationType) TableName() string {

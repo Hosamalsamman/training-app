@@ -1,4 +1,4 @@
-package organizationtypes
+package clients
 
 import (
 	"net/http"
@@ -17,12 +17,12 @@ func NewHandler(service *Service) *Handler {
 	}
 }
 
-func (h *Handler) ListOrganizationTypes(c *gin.Context) {
+func (h *Handler) ListClients(c *gin.Context) {
 
 	// TODO: replace with c.MustGet("clientID").(int)
 	clientID := 2
 
-	orgTypes, err := h.service.GetAll(clientID)
+	clients, err := h.service.GetAll(clientID)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -31,10 +31,10 @@ func (h *Handler) ListOrganizationTypes(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, orgTypes)
+	c.JSON(http.StatusOK, clients)
 }
 
-func (h *Handler) GetOrganizationType(c *gin.Context) {
+func (h *Handler) GetClient(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -46,7 +46,8 @@ func (h *Handler) GetOrganizationType(c *gin.Context) {
 	}
 	// TODO: replace with c.MustGet("clientID").(int)
 	clientID := 2
-	orgType, err := h.service.GetByID(clientID, id)
+
+	client, err := h.service.GetByID(clientID, id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -55,5 +56,5 @@ func (h *Handler) GetOrganizationType(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, orgType)
+	c.JSON(http.StatusOK, client)
 }

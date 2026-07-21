@@ -1,4 +1,4 @@
-package organizationtypes
+package clients
 
 import "training-app/internal/models"
 
@@ -12,12 +12,12 @@ func NewService(repo *Repository) *Service {
 	}
 }
 
-func (s *Service) GetAll(clientID int) ([]models.OrganizationType, error) {
+func (s *Service) GetAll(clientID int) ([]models.Client, error) {
 	repo := s.repo.ForClient(clientID)
 	return repo.GetAll()
 }
 
-func (s *Service) GetByID(clientID int, id int) (*models.OrganizationType, error) {
+func (s *Service) GetByID(clientID int, id int) (*models.Client, error) {
 	repo := s.repo.ForClient(clientID)
 	return repo.GetByID(id)
 }

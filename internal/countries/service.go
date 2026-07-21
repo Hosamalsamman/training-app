@@ -12,10 +12,12 @@ func NewService(repo *Repository) *Service {
 	}
 }
 
-func (s *Service) GetAll() ([]models.Country, error) {
-	return s.repo.GetAll()
+func (s *Service) GetAll(clientID int) ([]models.Country, error) {
+	repo := s.repo.ForClient(clientID)
+	return repo.GetAll()
 }
 
-func (s *Service) GetByID(id int) (*models.Country, error) {
-	return s.repo.GetByID(id)
+func (s *Service) GetByID(clientID int, id int) (*models.Country, error) {
+	repo := s.repo.ForClient(clientID)
+	return repo.GetByID(id)
 }
