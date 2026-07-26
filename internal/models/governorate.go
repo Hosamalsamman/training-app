@@ -6,7 +6,7 @@ type Governorate struct {
 	Name string `gorm:"column:name;size:2000;not null" json:"name"`
 
 	CountryID int `gorm:"column:country_id;not null" json:"country_id"`
-	Country Country `gorm:"foreignKey:CountryID" json:"country"`
+	Country *Country `gorm:"foreignKey:CountryID" json:"country"`
 
 	ClientID int `gorm:"column:client_id;not null" json:"client_id"`
 

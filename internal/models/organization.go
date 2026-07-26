@@ -9,15 +9,17 @@ type Organization struct {
 
 	Address string `gorm:"column:address;size:2000" json:"address,omitempty"`
 
-	OrganizationTypeID int `gorm:"column:organization_type_id;not null" json:"organization_type_id"`
-	OrganizationType OrganizationType `gorm:"foreignKey:OrganizationTypeID" json:"organization_type"`
+	OrganizationTypeID int              `gorm:"column:organization_type_id;not null" json:"organization_type_id"`
+	OrganizationType   OrganizationType `gorm:"foreignKey:OrganizationTypeID" json:"organization_type"`
 
-	GovernorateID int `gorm:"column:governorate_id;not null" json:"governorate_id"`
-	Governorate Governorate `gorm:"foreignKey:GovernorateID" json:"governorate"`
+	GovernorateID int         `gorm:"column:governorate_id;not null" json:"governorate_id"`
+	Governorate   Governorate `gorm:"foreignKey:GovernorateID" json:"governorate"`
 
-	ClientID int `gorm:"column:client_id;not null" json:"client_id"`
+	ClientID int    `gorm:"column:client_id;not null" json:"client_id"`
+	Client   *Client `gorm:"foreignKey:ClientID"`
 
 	WorkCenters []WorkCenter `gorm:"foreignKey:OrganizationID" json:"work_centers,omitempty"`
+	Departments []Department `gorm:"foreignKey:OrganizationID" json:"departments,omitempty"`
 }
 
 func (Organization) TableName() string {

@@ -29,10 +29,11 @@ func (r *Repository) GetAll() ([]models.Organization, error) {
 	var orgs []models.Organization
 
 	err := r.db.
-    Preload("Client").
-    Preload("OrganizationType").
-    Preload("Governorate").
-    Find(&orgs).Error
+		Preload("Client").
+		Preload("OrganizationType").
+		Preload("Governorate").
+		Preload("Governorate.Country").
+		Find(&orgs).Error
 
 	return orgs, err
 }
@@ -42,10 +43,10 @@ func (r *Repository) GetByID(id int) (*models.Organization, error) {
 	var org models.Organization
 
 	err := r.db.
-	Preload("Client").
-    Preload("OrganizationType").
-    Preload("Governorate").
-	First(&org, id).Error
+		Preload("Client").
+		Preload("OrganizationType").
+		Preload("Governorate").
+		First(&org, id).Error
 
 	if err != nil {
 		return nil, err
