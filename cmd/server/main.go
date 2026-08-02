@@ -70,9 +70,7 @@ func main() {
 	r.GET("/organization/:id", organizationHandler.GetOrganization)
 
 	// countries
-	countryRepo := countries.NewRepository(db.DB)
-	countryService := countries.NewService(countryRepo)
-	countryHandler := countries.NewHandler(countryService)
+	countryHandler := countries.New(db.DB)
 
 	r.GET("/countries", countryHandler.ListCountries)
 	r.GET("/country/:id", countryHandler.GetCountry)

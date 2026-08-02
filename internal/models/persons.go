@@ -47,8 +47,8 @@ type Person struct {
 	TrainerCertifyingOrganizationID *int          `gorm:"column:trainer_certifying_organization_id" json:"trainer_certifying_organization_id"`
 	TrainerCertifyingOrganization   *Organization `gorm:"foreignKey:TrainerCertifyingOrganizationID" json:"trainer_certifying_organization"`
 
-	UserName     *string `gorm:"column:user_name;size:500" json:"user_name"`
-	UserPassword *string `gorm:"column:user_password;size:500" json:"user_password"`
+	Username     *string `gorm:"column:username;size:500" json:"user_name"`
+	Password *string `gorm:"column:password;size:500"`
 
 	ClientID int    `gorm:"column:client_id;not null" json:"client_id"`
 	Client   Client `gorm:"foreignKey:ClientID" json:"client"`
@@ -58,4 +58,17 @@ type Person struct {
 
 func (Person) TableName() string {
 	return "persons"
+}
+
+type CreatePersonRequest struct {
+    Code                  *string `json:"code"`
+    Name                  string  `json:"name"`
+    GovernorateID         int     `json:"governorate_id"`
+    QualificationID       int     `json:"qualification_id"`
+    JobID                 int     `json:"job_id"`
+    OrganizationID        int     `json:"organization_id"`
+    DepartmentID          int     `json:"department_id"`
+
+    Username     *string `json:"username"`
+    Password *string `json:"password"`
 }
