@@ -16,12 +16,16 @@ func NewRepository(db *gorm.DB) *Repository {
 	}
 }
 
-func (r *Repository) ForClient(clientID int) *Repository {
+func (r *Repository) WithDB(db *gorm.DB) *Repository {
+	return &Repository{
+		db: db,
+	}
+}
 
+func (r *Repository) ForClient(clientID int) *Repository {
 	return &Repository{
 		db: r.db.Where("client_id = ?", clientID),
 	}
-
 }
 
 func (r *Repository) GetAll() ([]models.Job, error) {

@@ -16,6 +16,12 @@ func NewRepository(db *gorm.DB) *Repository {
 	}
 }
 
+func (r *Repository) WithDB(db *gorm.DB) *Repository {
+	return &Repository{
+		db: db,
+	}
+}
+
 func (r *Repository) ForClient(clientID int) *Repository {
 	return &Repository{
 		db: r.db.Where("client_id = ?", clientID),
@@ -38,6 +44,10 @@ func (r *Repository) GetAll() ([]models.Person, error) {
 		Preload("CurrentLearningPath").
 		Preload("CurrentGrade").
 		Preload("TrainerCertifyingOrganization").
+		Preload("TrainerSubjects").
+		Preload("TrainerCourses").
+		Preload("BackupTrainerCourses").
+		Preload("CoordinatedCourses").
 		Find(&persons).Error
 
 	return persons, err
@@ -59,6 +69,14 @@ func (r *Repository) GetByID(id int) (*models.Person, error) {
 		Preload("CurrentLearningPath").
 		Preload("CurrentGrade").
 		Preload("TrainerCertifyingOrganization").
+		Preload("TrainerSubjects.LearningSubject").
+		Preload("TrainerCourses.Room").
+		Preload("TrainerCourses.LearningSubject").
+		Preload("TrainerCourses.PathGradeSubjectTerm").
+		Preload("BackupTrainerCourses.Room").
+		Preload("BackupTrainerCourses.LearningSubject").
+		Preload("CoordinatedCourses.Room").
+		Preload("CoordinatedCourses.LearningSubject").
 		First(&person, id).Error
 
 	if err != nil {

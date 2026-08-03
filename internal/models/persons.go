@@ -23,7 +23,7 @@ type Person struct {
 	OrganizationID int          `gorm:"column:organization_id;not null" json:"organization_id"`
 	Organization   Organization `gorm:"foreignKey:OrganizationID" json:"organization"`
 
-	DepartmentID int        `gorm:"column:department_id;not null" json:"department_id"`
+	DepartmentID int        `gorm:"column:department_id" json:"department_id"`
 	Department   Department `gorm:"foreignKey:DepartmentID" json:"department"`
 
 	WorkSiteID *int      `gorm:"column:work_site_id" json:"work_site_id"`
@@ -54,6 +54,11 @@ type Person struct {
 	Client   Client `gorm:"foreignKey:ClientID" json:"client"`
 
 	TrainerSubjects []TrainerSubject `gorm:"foreignKey:PersonID" json:"trainer_subjects,omitempty"`
+
+	CoordinatedCourses []Course `gorm:"foreignKey:CoordinatorID" json:"coordinated_courses,omitempty"`
+
+	TrainerCourses       []Course `gorm:"foreignKey:TrainerID" json:"trainer_courses,omitempty"`
+	BackupTrainerCourses []Course `gorm:"foreignKey:BackupTrainerID" json:"backup_trainer_courses,omitempty"`
 }
 
 func (Person) TableName() string {

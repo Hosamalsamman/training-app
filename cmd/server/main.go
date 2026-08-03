@@ -4,25 +4,28 @@ import (
 	"training-app/db"
 	"training-app/internal/clients"
 	"training-app/internal/countries"
+	"training-app/internal/courses"
+	"training-app/internal/departments"
 	"training-app/internal/governorates"
+	"training-app/internal/grades"
 	"training-app/internal/jobTypeGroups"
+	"training-app/internal/jobs"
+	"training-app/internal/learningPaths"
+	"training-app/internal/learningSubjects"
+	"training-app/internal/learningTerms"
 	"training-app/internal/organizations"
 	"training-app/internal/organizationtypes"
+	"training-app/internal/pathGradeSubjectTerms"
+	"training-app/internal/pathGradeSubjects"
+	"training-app/internal/persons"
 	"training-app/internal/qualificationTypes"
 	"training-app/internal/qualifications"
+	"training-app/internal/trainerSubjects"
+	"training-app/internal/trainingRooms"
 	"training-app/internal/workCenters"
 	"training-app/internal/workGroups"
 	"training-app/internal/workSites"
-	"training-app/internal/jobs"
-	"training-app/internal/grades"
-	"training-app/internal/learningPaths"
-	"training-app/internal/learningSubjects"
-	"training-app/internal/pathGradeSubjects"
-	"training-app/internal/pathGradeSubjectTerms"
-	"training-app/internal/persons"
-	"training-app/internal/departments"
-	"training-app/internal/trainerSubjects"
-	
+	"training-app/internal/courseSessions"
 
 	"github.com/gin-gonic/gin"
 
@@ -54,17 +57,13 @@ func main() {
 	// r.GET("/db-check", handlers.DbCheck)
 
 	// organization types
-	organizationTypeRepo := organizationtypes.NewRepository(db.DB)
-	organizationTypeService := organizationtypes.NewService(organizationTypeRepo)
-	organizationTypeHandler := organizationtypes.NewHandler(organizationTypeService)
+	organizationTypeHandler := organizationtypes.New(db.DB)
 
 	r.GET("/organization-types", organizationTypeHandler.ListOrganizationTypes)
 	r.GET("/organization-type/:id", organizationTypeHandler.GetOrganizationType)
 
 	// organizations
-	organizationRepo := organizations.NewRepository(db.DB)
-	organizationService := organizations.NewService(organizationRepo)
-	organizationHandler := organizations.NewHandler(organizationService)
+	organizationHandler := organizations.New(db.DB)
 
 	r.GET("/organizations", organizationHandler.ListOrganizations)
 	r.GET("/organization/:id", organizationHandler.GetOrganization)
@@ -76,140 +75,130 @@ func main() {
 	r.GET("/country/:id", countryHandler.GetCountry)
 
 	// clients
-	clientRepo := clients.NewRepository(db.DB)
-	clientService := clients.NewService(clientRepo)
-	clientHandler := clients.NewHandler(clientService)
+	clientHandler := clients.New(db.DB)
 
 	r.GET("/clients", clientHandler.ListClients)
 	r.GET("/client/:id", clientHandler.GetClient)
 
 	// governorates
-	govRepo := governorates.NewRepository(db.DB)
-	govService := governorates.NewService(govRepo)
-	govHandler := governorates.NewHandler(govService)
+	govHandler := governorates.New(db.DB)
 
 	r.GET("/governorates", govHandler.ListGovernorates)
 	r.GET("/governorate/:id", govHandler.GetGovernorate)
 
 	// gob type groups
-	jobTypeGroupRepo := jobTypeGroups.NewRepository(db.DB)
-	jobTypeGroupService := jobTypeGroups.NewService(jobTypeGroupRepo)
-	jobTypeGroupHandler := jobTypeGroups.NewHandler(jobTypeGroupService)
+	jobTypeGroupHandler := jobTypeGroups.New(db.DB)
 
 	r.GET("/job-type-groups", jobTypeGroupHandler.ListJobTypeGroups)
 	r.GET("/job-type-group/:id", jobTypeGroupHandler.GetJobTypeGroup)
 
 	// work centers
-	workCenterRepo := workCenters.NewRepository(db.DB)
-	workCenterService := workCenters.NewService(workCenterRepo)
-	workCenterHandler := workCenters.NewHandler(workCenterService)
+	workCenterHandler := workCenters.New(db.DB)
 
 	r.GET("/work-centers", workCenterHandler.ListWorkCenters)
 	r.GET("/work-center/:id", workCenterHandler.GetWorkCenter)
 
 	// work sites
-	workSiteRepo := workSites.NewRepository(db.DB)
-	workSiteService := workSites.NewService(workSiteRepo)
-	workSiteHandler := workSites.NewHandler(workSiteService)
+	workSiteHandler := workSites.New(db.DB)
 
 	r.GET("/work-sites", workSiteHandler.ListWorkSites)
 	r.GET("/work-site/:id", workSiteHandler.GetWorkSite)
 
 	// work groups
-	workGroupRepo := workGroups.NewRepository(db.DB)
-	workGroupService := workGroups.NewService(workGroupRepo)
-	workGroupHandler := workGroups.NewHandler(workGroupService)
+	workGroupHandler := workGroups.New(db.DB)
 
 	r.GET("/work-groups", workGroupHandler.ListWorkGroups)
 	r.GET("/work-group/:id", workGroupHandler.GetWorkGroup)
 
 	// qualification types
-	qualificationTypeRepo := qualificationTypes.NewRepository(db.DB)
-	qualificationTypeService := qualificationTypes.NewService(qualificationTypeRepo)
-	qualificationTypeHandler := qualificationTypes.NewHandler(qualificationTypeService)
+	qualificationTypeHandler := qualificationTypes.New(db.DB)
 
 	r.GET("/qualification-types", qualificationTypeHandler.ListQualificationTypes)
 	r.GET("/qualification-type/:id", qualificationTypeHandler.GetQualificationType)
 
 	//qualifications
-	qualificationRepo := qualifications.NewRepository(db.DB)
-	qualificationService := qualifications.NewService(qualificationRepo)
-	qualificationHandler := qualifications.NewHandler(qualificationService)
+	qualificationHandler := qualifications.New(db.DB)
 
 	r.GET("/qualifications", qualificationHandler.ListQualifications)
 	r.GET("/qualification/:id", qualificationHandler.GetQualification)
 
 	// jobs
-	jobRepo := jobs.NewRepository(db.DB)
-	jobService := jobs.NewService(jobRepo)
-	jobHandler := jobs.NewHandler(jobService)
+	jobHandler := jobs.New(db.DB)
 
 	r.GET("/jobs", jobHandler.ListJobs)
 	r.GET("/job/:id", jobHandler.GetJob)
 
 	// grades
-	gradeRepo := grades.NewRepository(db.DB)
-	gradeService := grades.NewService(gradeRepo)
-	gradeHandler := grades.NewHandler(gradeService)
+	gradeHandler := grades.New(db.DB)
 
 	r.GET("/grades", gradeHandler.ListGrades)
 	r.GET("/grade/:id", gradeHandler.GetGrade)
 
 	// learning paths
-	learningPathRepo := learningPaths.NewRepository(db.DB)
-	learningPathService := learningPaths.NewService(learningPathRepo)
-	learningPathHandler := learningPaths.NewHandler(learningPathService)
+	learningPathHandler := learningPaths.New(db.DB)
 
 	r.GET("/learning-paths", learningPathHandler.ListLearningPaths)
 	r.GET("/learning-path/:id", learningPathHandler.GetLearningPath)
 
 	// learning subjects
-	learningSubjectRepo := learningSubjects.NewRepository(db.DB)
-	learningSubjectService := learningSubjects.NewService(learningSubjectRepo)
-	learningSubjectHandler := learningSubjects.NewHandler(learningSubjectService)
+	learningSubjectHandler := learningSubjects.New(db.DB)
 
 	r.GET("/learning-subjects", learningSubjectHandler.ListLearningSubjects)
 	r.GET("/learning-subject/:id", learningSubjectHandler.GetLearningSubject)
 
 	// path grade subjects
-	pathGradeSubjectRepo := pathGradeSubjects.NewRepository(db.DB)
-	pathGradeSubjectService := pathGradeSubjects.NewService(pathGradeSubjectRepo)
-	pathGradeSubjectHandler := pathGradeSubjects.NewHandler(pathGradeSubjectService)
+	pathGradeSubjectHandler := pathGradeSubjects.New(db.DB)
 
 	r.GET("/path-grade-subjects", pathGradeSubjectHandler.ListPathGradeSubjects)
 	r.GET("/path-grade-subject/:id", pathGradeSubjectHandler.GetPathGradeSubject)
 
 	// path grge subject terms
-	pathGradeSubjectTermRepo := pathGradeSubjectTerm.NewRepository(db.DB)
-	pathGradeSubjectTermService := pathGradeSubjectTerm.NewService(pathGradeSubjectTermRepo)
-	pathGradeSubjectTermHandler := pathGradeSubjectTerm.NewHandler(pathGradeSubjectTermService)
+	pathGradeSubjectTermHandler := pathGradeSubjectTerm.New(db.DB)
 
 	r.GET("/path-grade-subject-terms", pathGradeSubjectTermHandler.ListPathGradeSubjectTerms)
 	r.GET("/path-grade-subject-term/:id", pathGradeSubjectTermHandler.GetPathGradeSubjectTerm)
 
 	// persons
-	personRepo := persons.NewRepository(db.DB)
-	personService := persons.NewService(personRepo)
-	personHandler := persons.NewHandler(personService)
+	personHandler := persons.New(db.DB)
 
 	r.GET("/persons", personHandler.ListPersons)
 	r.GET("/person/:id", personHandler.GetPerson)
 
 	// departments
-	departmentRepo := departments.NewRepository(db.DB)
-	departmentService := departments.NewService(departmentRepo)
-	departmentHandler := departments.NewHandler(departmentService)
+	departmentHandler := departments.New(db.DB)
 
 	r.GET("/departments", departmentHandler.ListDepartments)
 	r.GET("/department/:id", departmentHandler.GetDepartment)
 
 	// trainer subjects
-	trainerSubjectRepo := trainerSubjects.NewRepository(db.DB)
-	trainerSubjectService := trainerSubjects.NewService(trainerSubjectRepo)
-	trainerSubjectHandler := trainerSubjects.NewHandler(trainerSubjectService)
+	trainerSubjectHandler := trainerSubjects.New(db.DB)
 
 	r.GET("/trainer-subjects", trainerSubjectHandler.ListTrainerSubjects)
 	r.GET("/trainer-subject/:id", trainerSubjectHandler.GetTrainerSubject)
+
+	// learning terms
+	learningTermHandler := learningTerms.New(db.DB)
+
+	r.GET("/learning-terms", learningTermHandler.ListLearningTerms)
+	r.GET("/learning-term/:id", learningTermHandler.GetLearningTerm)
+
+	// rooms
+	roomHandler := trainingRooms.New(db.DB)
+
+	r.GET("/rooms", roomHandler.ListTrainingRooms)
+	r.GET("/room/:id", roomHandler.GetTrainingRoom)
+
+	// courses
+	courseHandler := courses.New(db.DB)
+
+	r.GET("/courses", courseHandler.ListCourses)
+	r.GET("/course/:id", courseHandler.GetCourse)
+
+	// course sessions
+	courseSessionHandler := courseSessions.New(db.DB)
+
+	r.GET("/course-sessions", courseSessionHandler.ListCourseSessions)
+	r.GET("/course-session/:id", courseSessionHandler.GetCourseSession)
 
 	r.Run(":8000")
 }

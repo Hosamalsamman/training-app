@@ -14,14 +14,14 @@ func NewService(repo *Repository) *Service {
 
 func (s *Service) GetAll(clientID int) ([]models.Qualification, error) {
 
-	repo := s.repo.forClient(clientID)
+	repo := s.repo.ForClient(clientID)
 
 	return repo.GetAll()
 }
 
 func (s *Service) GetByID(clientID, id int) (*models.Qualification, error) {
 
-	repo := s.repo.forClient(clientID)
+	repo := s.repo.ForClient(clientID)
 
 	return repo.GetByID(id)
 }

@@ -15,6 +15,11 @@ func NewRepository(db *gorm.DB) *Repository {
 		db: db,
 	}
 }
+func (r *Repository) WithDB(db *gorm.DB) *Repository {
+	return &Repository{
+		db: db,
+	}
+}
 
 func (r *Repository) ForClient(clientID int) *Repository {
 	return &Repository{
@@ -31,6 +36,7 @@ func (r *Repository) GetAll() ([]models.PathGradeSubject, error) {
 		Preload("LearningPath").
 		Preload("Grade").
 		Preload("LearningSubject").
+		Preload("PathGradeSubjectTerms.LearningTerm").
 		Find(&pathGradeSubjects).Error
 
 	return pathGradeSubjects, err
@@ -45,6 +51,7 @@ func (r *Repository) GetByID(id int) (*models.PathGradeSubject, error) {
 		Preload("LearningPath").
 		Preload("Grade").
 		Preload("LearningSubject").
+		Preload("PathGradeSubjectTerms.LearningTerm").
 		First(&pathGradeSubject, id).Error
 
 	if err != nil {

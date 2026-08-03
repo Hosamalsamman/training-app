@@ -6,7 +6,8 @@ type PathGradeSubjectTerm struct {
 	PathGradeSubjectsID int              `gorm:"column:path_grade_subjects_id;not null" json:"path_grade_subjects_id"`
 	PathGradeSubject    PathGradeSubject `gorm:"foreignKey:PathGradeSubjectsID" json:"path_grade_subject"`
 
-	Term string `gorm:"column:term;size:2;not null" json:"term"`
+	TermID int          `gorm:"column:term_id;not null" json:"term_id"`
+	Term   LearningTerm `gorm:"foreignKey:TermID" json:"term"`
 
 	Code *int `gorm:"column:code" json:"code"`
 
