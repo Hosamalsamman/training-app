@@ -4,8 +4,11 @@ import (
 	"training-app/db"
 	"training-app/internal/clients"
 	"training-app/internal/countries"
+	"training-app/internal/courseSessions"
 	"training-app/internal/courses"
 	"training-app/internal/departments"
+	"training-app/internal/documentationType"
+	"training-app/internal/documentations"
 	"training-app/internal/governorates"
 	"training-app/internal/grades"
 	"training-app/internal/jobTypeGroups"
@@ -25,7 +28,7 @@ import (
 	"training-app/internal/workCenters"
 	"training-app/internal/workGroups"
 	"training-app/internal/workSites"
-	"training-app/internal/courseSessions"
+	"training-app/internal/evaluationType"
 
 	"github.com/gin-gonic/gin"
 
@@ -199,6 +202,24 @@ func main() {
 
 	r.GET("/course-sessions", courseSessionHandler.ListCourseSessions)
 	r.GET("/course-session/:id", courseSessionHandler.GetCourseSession)
+
+	// documentation types
+	documentationTypeHandler := documentationType.New(db.DB)
+	
+	r.GET("/documentation-types", documentationTypeHandler.ListDocTypes)
+	r.GET("/documentation-type/:id", documentationTypeHandler.GetDocType)
+
+	// documentation
+	documentationHandler := documentations.New(db.DB)
+
+	r.GET("/documentations", documentationHandler.ListDocumentations)
+	r.GET("/documentation/:id", documentationHandler.GetDocumentation)
+
+	// evaluation types
+	evaluationTypeHandler := evaluationType.New(db.DB)
+
+	r.GET("/evaluation-types", evaluationTypeHandler.ListEvaluationTypes)
+	r.GET("/evaluation-type/:id", evaluationTypeHandler.GetEvaluationType)
 
 	r.Run(":8000")
 }

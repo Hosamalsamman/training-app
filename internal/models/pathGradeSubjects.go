@@ -17,6 +17,8 @@ type PathGradeSubject struct {
 	Client   Client `gorm:"foreignKey:ClientID" json:"client"`
 
 	PathGradeSubjectTerms []PathGradeSubjectTerm `gorm:"foreignKey:PathGradeSubjectID" json:"path_grade_subject_terms,omitempty"`
+
+	Documentations []Documentation `gorm:"foreignKey:PathGradeSubjectID" json:"documentations"`
 }
 
 func (PathGradeSubject) TableName() string {

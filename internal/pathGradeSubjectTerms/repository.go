@@ -30,6 +30,7 @@ func (r *Repository) GetAll() ([]models.PathGradeSubjectTerm, error) {
 		Preload("Client").
 		Preload("PathGradeSubject").
 		Preload("Term").
+		Preload("Documentations").
 		Find(&terms).Error
 
 	return terms, err
@@ -43,6 +44,7 @@ func (r *Repository) GetByID(id int) (*models.PathGradeSubjectTerm, error) {
 		Preload("Client").
 		Preload("PathGradeSubject").
 		Preload("Term").
+		Preload("Documentations").
 		First(&term, id).Error
 
 	if err != nil {

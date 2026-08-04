@@ -8,6 +8,8 @@ type LearningSubject struct {
 	Client   Client `gorm:"foreignKey:ClientID" json:"client"`
 
 	TrainerSubjects []TrainerSubject `gorm:"foreignKey:LearningSubjectID" json:"trainer_subjects,omitempty"`
+	
+	Documentations []Documentation `gorm:"foreignKey:LearningSubjectID" json:"documentations"`
 }
 
 func (LearningSubject) TableName() string {

@@ -31,6 +31,7 @@ func (r *Repository) GetAll() ([]models.Course, error) {
 	err := r.db.
 		Preload("Client").
 		Preload("ExecutedCourses").
+		Preload("PathGradeSubject").
 		Preload("PathGradeSubjectTerm").
 		Preload("LearningSubject").
 		Preload("Room").
@@ -39,7 +40,9 @@ func (r *Repository) GetAll() ([]models.Course, error) {
 		Preload("BackupTrainer").
 		Preload("Coordinator").
 		Preload("Sessions").
-		Preload("Planned").Find(&courses).Error
+		Preload("Planned").
+		Preload("Documentations").
+		Find(&courses).Error
 	return courses, err
 }
 
@@ -47,6 +50,7 @@ func (r *Repository) GetByID(id int) (*models.Course, error) {
 	var course models.Course
 	err := r.db.
 		Preload("Client").
+		Preload("PathGradeSubject").
 		Preload("PathGradeSubjectTerm").
 		Preload("LearningSubject").
 		Preload("Room").
@@ -55,7 +59,9 @@ func (r *Repository) GetByID(id int) (*models.Course, error) {
 		Preload("BackupTrainer").
 		Preload("Coordinator").
 		Preload("Sessions").
-		Preload("Planned").First(&course, id).Error
+		Preload("Planned").
+		Preload("Documentations").
+		First(&course, id).Error
 	if err != nil {
 		return nil, err
 	}

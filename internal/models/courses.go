@@ -1,12 +1,18 @@
 package models
 
-import "time"
+import (
+	"time"
+	"github.com/shopspring/decimal"
+)
 
 type Course struct {
 	ID   int    `gorm:"primaryKey;column:id" json:"id"`
 	Name string `gorm:"column:name;size:2000;not null" json:"name"`
 
-	// Either PathGradeSubjectTerm OR LearningSubject
+	// Either PathGradeSubjectTerm OR LearningSubject OR PathGradeSubject is not null
+	PathGradeSubjectID *int               `gorm:"column:path_grade_subject_id" json:"path_grade_subject_id"`
+	PathGradeSubject   *PathGradeSubject  `gorm:"foreignKey:PathGradeSubjectID" json:"path_grade_subject,omitempty"`
+	
 	PathGradeSubjectTermID *int                  `gorm:"column:path_grade_subject_term_id" json:"path_grade_subject_term_id"`
 	PathGradeSubjectTerm   *PathGradeSubjectTerm `gorm:"foreignKey:PathGradeSubjectTermID" json:"path_grade_subject_term,omitempty"`
 
@@ -35,7 +41,7 @@ type Course struct {
 	CoordinatorID *int    `gorm:"column:coordinator_id" json:"coordinator_id"`
 	Coordinator   *Person `gorm:"foreignKey:CoordinatorID;references:ID" json:"coordinator,omitempty"`
 
-	Cost float64 `gorm:"column:cost;type:numeric(9,3);not null" json:"cost"`
+	Cost decimal.Decimal `gorm:"column:cost;type:numeric(9,3);not null" json:"cost"`
 
 	IsPlanned  *bool `gorm:"column:is_palnned" json:"is_planned"`
 	IsExecuted *bool `gorm:"column:is_executed" json:"is_executed"`
@@ -49,4 +55,6 @@ type Course struct {
 	ExecutedCourses []Course `gorm:"foreignKey:PlannedID" json:"executed_courses,omitempty"`
 
 	Sessions []CourseSession `gorm:"foreignKey:CourseID" json:"sessions,omitempty"`
+
+	Documentations []Documentation `gorm:"foreignKey:CourseID" json:"documentations"`
 }
