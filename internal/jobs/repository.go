@@ -16,6 +16,10 @@ func NewRepository(db *gorm.DB) *Repository {
 	}
 }
 
+func (r *Repository) DB() *gorm.DB {
+	return r.db
+}
+
 func (r *Repository) WithDB(db *gorm.DB) *Repository {
 	return &Repository{
 		db: db,
@@ -48,4 +52,8 @@ func (r *Repository) GetByID(id int) (*models.Job, error) {
 	}
 
 	return &job, nil
+}
+
+func (r *Repository) Create(job *models.Job) error {
+	return r.db.Create(job).Error
 }

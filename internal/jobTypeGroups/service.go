@@ -25,3 +25,5 @@ func (s *Service) GetByID(clientID, id int) (*models.JobTypeGroup, error) {
 
 	return repo.GetByID(id)
 }
+
+
