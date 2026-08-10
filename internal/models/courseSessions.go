@@ -16,4 +16,6 @@ type CourseSession struct {
 	Client   Client `gorm:"foreignKey:ClientID" json:"client"`
 
 	Documentations []Documentation `gorm:"foreignKey:CourseSessionID" json:"documentations"`
+
+	Participants []CourseSessionParticipant `gorm:"foreignKey:CourseSessionID;references:ID" json:"participants"`
 }

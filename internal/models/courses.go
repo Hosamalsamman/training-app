@@ -57,4 +57,6 @@ type Course struct {
 	Sessions []CourseSession `gorm:"foreignKey:CourseID" json:"sessions,omitempty"`
 
 	Documentations []Documentation `gorm:"foreignKey:CourseID" json:"documentations"`
+
+	Participants []CourseParticipant `gorm:"foreignKey:CourseID;references:ID" json:"participants"`
 }

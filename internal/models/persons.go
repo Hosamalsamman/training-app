@@ -59,6 +59,7 @@ type Person struct {
 
 	TrainerCourses       []Course `gorm:"foreignKey:TrainerID" json:"trainer_courses,omitempty"`
 	BackupTrainerCourses []Course `gorm:"foreignKey:BackupTrainerID" json:"backup_trainer_courses,omitempty"`
+	CourseParticipants []CourseParticipant `gorm:"foreignKey:PersonID;references:ID" json:"course_participants"`
 }
 
 func (Person) TableName() string {

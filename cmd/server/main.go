@@ -4,11 +4,14 @@ import (
 	"training-app/db"
 	"training-app/internal/clients"
 	"training-app/internal/countries"
+	"training-app/internal/courseParticipants"
+	"training-app/internal/courseSessionParticipants"
 	"training-app/internal/courseSessions"
 	"training-app/internal/courses"
 	"training-app/internal/departments"
 	"training-app/internal/documentationType"
 	"training-app/internal/documentations"
+	"training-app/internal/evaluationType"
 	"training-app/internal/governorates"
 	"training-app/internal/grades"
 	"training-app/internal/jobTypeGroups"
@@ -28,7 +31,7 @@ import (
 	"training-app/internal/workCenters"
 	"training-app/internal/workGroups"
 	"training-app/internal/workSites"
-	"training-app/internal/evaluationType"
+	"training-app/internal/courseParticipantFinalExam"
 
 	"github.com/gin-gonic/gin"
 
@@ -220,6 +223,24 @@ func main() {
 
 	r.GET("/evaluation-types", evaluationTypeHandler.ListEvaluationTypes)
 	r.GET("/evaluation-type/:id", evaluationTypeHandler.GetEvaluationType)
+
+	// course participants
+	courseParticipantHandler := courseParticipants.New(db.DB)
+
+	r.GET("/course-participants", courseParticipantHandler.ListCourseParticipants)
+	r.GET("/course-participant/:id", courseParticipantHandler.GetCourseParticipant)
+
+	// course session participants
+	courseSessionParticipantHandler := courseSessionParticipants.New(db.DB)
+
+	r.GET("/course-session-participants", courseSessionParticipantHandler.ListCourseSessionParticipants)
+	r.GET("/course-session-participant/:id", courseSessionParticipantHandler.GetCourseSessionParticipant)
+
+	// course participant final exams
+	courseParticipantFinalExamHandler := courseParticipantFinalExam.New(db.DB)
+
+	r.GET("/course-participant-final-exams", courseParticipantFinalExamHandler.ListCourseParticipantsFinalExams)	
+	r.GET("/course-participant-final-exam/:id", courseParticipantFinalExamHandler.GetCourseParticipantFinalExam)
 
 	r.Run(":8000")
 }

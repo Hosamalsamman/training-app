@@ -6,4 +6,6 @@ type EvaluationType struct {
 
 	ClientID int    `gorm:"column:client_id;not null" json:"client_id"`
 	Client   Client `gorm:"foreignKey:ClientID" json:"client"`
+
+	CourseParticipants []CourseParticipant `gorm:"foreignKey:FinalEvaluationID;references:ID" json:"course_participants"`
 }

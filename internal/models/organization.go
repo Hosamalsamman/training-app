@@ -20,6 +20,7 @@ type Organization struct {
 
 	WorkCenters []WorkCenter `gorm:"foreignKey:OrganizationID" json:"work_centers,omitempty"`
 	Departments []Department `gorm:"foreignKey:OrganizationID" json:"departments,omitempty"`
+	OrganizedFinalExams []CourseParticipantFinalExam `gorm:"foreignKey:OrganizedBy;references:ID" json:"organized_final_exams"`
 }
 
 func (Organization) TableName() string {

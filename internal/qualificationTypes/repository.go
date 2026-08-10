@@ -16,6 +16,10 @@ func NewRepository(db *gorm.DB) *Repository {
 	}
 }
 
+func (r *Repository) DB() *gorm.DB {
+	return r.db
+}
+
 func (r *Repository) forClient(clientID int) *Repository {
 	return &Repository{
 		db: r.db.Where("client_id = ?", clientID),
