@@ -25,4 +25,6 @@ type Documentation struct {
 
 	CourseSessionID *int           `gorm:"column:course_session_id" json:"course_session_id"`
 	CourseSession   *CourseSession `gorm:"foreignKey:CourseSessionID" json:"course_session"`
+
+	CourseParticipantFinalExams []CourseParticipantFinalExam `gorm:"foreignKey:DocumentationID;references:ID" json:"course_participant_final_exams"`
 }

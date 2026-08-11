@@ -20,8 +20,8 @@ type Course struct {
 	LearningSubject   *LearningSubject  `gorm:"foreignKey:LearningSubjectID" json:"learning_subject,omitempty"`
 
 	DurationInDays int       `gorm:"column:duration_in_days;not null" json:"duration_in_days"`
-	StartingDate   time.Time `gorm:"column:starting_date;type:date;not null" json:"starting_date"`
-	EndDate        time.Time `gorm:"column:end_date;type:date;not null" json:"end_date"`
+	StartingDate   time.Time `gorm:"column:starting_date;type:date" json:"starting_date"`
+	EndDate        time.Time `gorm:"column:end_date;type:date" json:"end_date"`
 
 	NumberOfInternalParticipants *int `gorm:"column:number_of_internal_participants" json:"number_of_internal_participants"`
 	NumberOfExternalParticipants *int `gorm:"column:number_of_external_participants" json:"number_of_external_participants"`

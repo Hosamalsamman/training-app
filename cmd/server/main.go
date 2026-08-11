@@ -4,6 +4,7 @@ import (
 	"training-app/db"
 	"training-app/internal/clients"
 	"training-app/internal/countries"
+	"training-app/internal/courseParticipantFinalExam"
 	"training-app/internal/courseParticipants"
 	"training-app/internal/courseSessionParticipants"
 	"training-app/internal/courseSessions"
@@ -21,8 +22,11 @@ import (
 	"training-app/internal/learningTerms"
 	"training-app/internal/organizations"
 	"training-app/internal/organizationtypes"
+	"training-app/internal/participantType"
 	"training-app/internal/pathGradeSubjectTerms"
 	"training-app/internal/pathGradeSubjects"
+	"training-app/internal/performanceEvaluationCategories"
+	"training-app/internal/performanceEvaluationItems"
 	"training-app/internal/persons"
 	"training-app/internal/qualificationTypes"
 	"training-app/internal/qualifications"
@@ -31,7 +35,6 @@ import (
 	"training-app/internal/workCenters"
 	"training-app/internal/workGroups"
 	"training-app/internal/workSites"
-	"training-app/internal/courseParticipantFinalExam"
 
 	"github.com/gin-gonic/gin"
 
@@ -241,6 +244,24 @@ func main() {
 
 	r.GET("/course-participant-final-exams", courseParticipantFinalExamHandler.ListCourseParticipantsFinalExams)	
 	r.GET("/course-participant-final-exam/:id", courseParticipantFinalExamHandler.GetCourseParticipantFinalExam)
+
+	// performance evaluation categories
+	performanceEvaluationCategoryHandler := performanceEvaluationCategories.New(db.DB)
+
+	r.GET("/performance-evaluation-categories", performanceEvaluationCategoryHandler.ListPerformanceEvaluationCategories)	
+	r.GET("/performance-evaluation-category/:id", performanceEvaluationCategoryHandler.GetPerformanceEvaluationCategory)
+
+	// performance evaluation items
+	performanceEvaluationItemHandler := performanceEvaluationItems.New(db.DB)
+
+	r.GET("/performance-evaluation-items", performanceEvaluationItemHandler.ListPerformanceEvaluationItems)		
+	r.GET("/performance-evaluation-item/:id", performanceEvaluationItemHandler.GetPerformanceEvaluationItem)
+
+	// participant types
+	participantTypeHandler := participantType.New(db.DB)
+
+	r.GET("/participant-types", participantTypeHandler.ListParticipantTypes)		
+	r.GET("/participant-type/:id", participantTypeHandler.GetParticipantType)
 
 	r.Run(":8000")
 }

@@ -40,6 +40,7 @@ func (r *Repository) GetAll() ([]models.CourseParticipantFinalExam, error) {
 	Preload("Client").
 	Preload("Organizer").
 	Preload("CourseParticipant").
+	Preload("Documentation").
 	Preload("CourseParticipant.Person").
 	Preload("CourseParticipant.Course").
 	Find(&participantsExams).Error
@@ -55,6 +56,7 @@ func (r *Repository) GetByID(id int) (*models.CourseParticipantFinalExam, error)
 	Preload("Client").
 	Preload("Organizer").
 	Preload("CourseParticipant").
+	Preload("Documentation").
 	Preload("CourseParticipant.Person").
 	Preload("CourseParticipant.Course").
 	First(&courseParticipantExam, id).Error
