@@ -7,6 +7,7 @@ type PerformanceEvaluationCategory struct {
 
 	ClientID int    `gorm:"column:client_id;not null" json:"client_id"`
 	Client   Client `gorm:"foreignKey:ClientID;references:ID" json:"client"`
+
 }
 
 func (PerformanceEvaluationCategory) TableName() string {

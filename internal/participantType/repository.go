@@ -37,6 +37,9 @@ func (r *Repository) GetAll() ([]models.ParticipantType, error) {
 
 	err := r.db.
 	Preload("Client").
+	Preload("PerformanceEvaluationParticipantCategoryItems").
+	Preload("PerformanceEvaluationParticipantCategoryItems.PerformanceEvaluationCategory").
+	Preload("PerformanceEvaluationParticipantCategoryItems.PerformanceEvaluationItem").
 	Find(&types).Error
 
 	return types, err
@@ -47,6 +50,9 @@ func (r *Repository) GetByID(id int) (*models.ParticipantType, error) {
 
 	err := r.db.
 	Preload("Client").
+	Preload("PerformanceEvaluationParticipantCategoryItems").
+	Preload("PerformanceEvaluationParticipantCategoryItems.PerformanceEvaluationCategory").
+	Preload("PerformanceEvaluationParticipantCategoryItems.PerformanceEvaluationItem").
 	First(&t, id).Error
 
 	if err != nil {

@@ -1,4 +1,4 @@
-package performanceEvaluationItems
+package performanceEvaluationParticipantCategoryItems
 
 import (
 	"training-app/internal/models"
@@ -32,23 +32,29 @@ func (r *Repository) ForClient(clientID int) *Repository {
 	}
 }
 
-func (r *Repository) GetAll() ([]models.PerformanceEvaluationItem, error) {
+func (r *Repository) GetAll() ([]models.PerformanceEvaluationParticipantCategoryItem, error) {
 
-	var pItems []models.PerformanceEvaluationItem
+	var pItems []models.PerformanceEvaluationParticipantCategoryItem
 
 	err := r.db.
 		Preload("Client").
+		Preload("ParticipantType").
+		Preload("PerformanceEvaluationCategory").
+		Preload("PerformanceEvaluationItem").
 		Find(&pItems).Error
 
 	return pItems, err
 }
 
-func (r *Repository) GetByID(id int) (*models.PerformanceEvaluationItem, error) {
+func (r *Repository) GetByID(id int) (*models.PerformanceEvaluationParticipantCategoryItem, error) {
 
-	var pItem models.PerformanceEvaluationItem
+	var pItem models.PerformanceEvaluationParticipantCategoryItem
 
 	err := r.db.
 		Preload("Client").
+		Preload("ParticipantType").
+		Preload("PerformanceEvaluationCategory").
+		Preload("PerformanceEvaluationItem").
 		First(&pItem, id).Error
 
 	if err != nil {
