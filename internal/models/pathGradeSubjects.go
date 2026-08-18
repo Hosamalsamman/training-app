@@ -1,20 +1,18 @@
 package models
 
 type PathGradeSubject struct {
-	ID   int    `gorm:"primaryKey;column:id" json:"id"`
-	Name string `gorm:"column:name;size:2000;not null" json:"name"`
+	ID int `gorm:"primaryKey;column:id" json:"id"`
 
-	LearningPathID int          `gorm:"column:learning_path_id;not null" json:"learning_path_id"`
-	LearningPath   LearningPath `gorm:"foreignKey:LearningPathID" json:"learning_path"`
+	Name string `gorm:"column:name;not null" json:"name"`
 
-	GradeID int   `gorm:"column:grade_id;not null" json:"grade_id"`
-	Grade   Grade `gorm:"foreignKey:GradeID" json:"grade"`
+	PathGradeID int       `gorm:"column:path_grade_id;not null" json:"path_grade_id"`
+	PathGrade   PathGrade `gorm:"foreignKey:PathGradeID;references:ID" json:"path_grade"`
 
-	LearningSubjectID int             `gorm:"column:learning_subject_id;not null" json:"learning_subject_id"`
-	LearningSubject   LearningSubject `gorm:"foreignKey:LearningSubjectID" json:"learning_subject"`
+	LearningSubjectID int            `gorm:"column:learning_subject_id;not null" json:"learning_subject_id"`
+	LearningSubject   LearningSubject `gorm:"foreignKey:LearningSubjectID;references:ID" json:"learning_subject"`
 
 	ClientID int    `gorm:"column:client_id;not null" json:"client_id"`
-	Client   Client `gorm:"foreignKey:ClientID" json:"client"`
+	Client   Client `gorm:"foreignKey:ClientID;references:ID" json:"client"`
 
 	PathGradeSubjectTerms []PathGradeSubjectTerm `gorm:"foreignKey:PathGradeSubjectID;references:ID" json:"path_grade_subject_terms"`
 

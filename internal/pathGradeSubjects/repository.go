@@ -38,8 +38,7 @@ func (r *Repository) GetAll() ([]models.PathGradeSubject, error) {
 
 	err := r.db.
 		Preload("Client").
-		Preload("LearningPath").
-		Preload("Grade").
+		Preload("PathGrade").
 		Preload("LearningSubject").
 		Preload("PathGradeSubjectTerms.LearningTerm").
 		Preload("Documentations").
@@ -54,8 +53,7 @@ func (r *Repository) GetByID(id int) (*models.PathGradeSubject, error) {
 
 	err := r.db.
 		Preload("Client").
-		Preload("LearningPath").
-		Preload("Grade").
+		Preload("PathGrade").
 		Preload("LearningSubject").
 		Preload("PathGradeSubjectTerms.LearningTerm").
 		Preload("Documentations").

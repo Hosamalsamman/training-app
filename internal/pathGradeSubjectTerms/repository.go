@@ -56,6 +56,7 @@ func (r *Repository) GetByID(id int) (*models.PathGradeSubjectTerm, error) {
 		Preload("PathGradeSubject").
 		Preload("Term").
 		Preload("Documentations").
+		Preload("PathGradeSubject.LearningPath").
 		First(&term, id).Error
 
 	if err != nil {

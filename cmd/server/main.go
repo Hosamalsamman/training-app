@@ -26,6 +26,7 @@ import (
 	"training-app/internal/participantType"
 	"training-app/internal/pathGradeSubjectTerms"
 	"training-app/internal/pathGradeSubjects"
+	"training-app/internal/pathGrades"
 	"training-app/internal/performanceEvaluationCategories"
 	"training-app/internal/performanceEvaluationItems"
 	"training-app/internal/persons"
@@ -53,15 +54,7 @@ func main() {
 	db.Connect()
 
 	r := gin.Default()
-	// func TenantMiddleware(c *gin.Context) {
-	// 	clientID := getClientIDFromJWT(c)
 
-	// 	scopedDB := db.DB.Where("client_id = ?", clientID)
-
-	// 	c.Set("db", scopedDB)
-
-	// 	c.Next()
-	// }
 
 	// r.GET("/", handlers.Home)
 	// r.GET("/db-check", handlers.DbCheck)
@@ -269,6 +262,14 @@ func main() {
 
 	r.GET("/performance-evaluation-participant-category-item/:id", performanceEvaluationParticipantCategoryItemHandler.GetPerformanceEvaluationParticipantCategoryItem)
 	r.GET("/performance-evaluation-participant-category-items", performanceEvaluationParticipantCategoryItemHandler.ListPerformanceEvaluationParticipantCategoryItems)
+
+	// path grades
+	pathGradeHandler := pathGrades.New(db.DB)
+
+	r.GET("/path-grades", pathGradeHandler.ListPathGrades)
+	r.GET("/path-grade/:id", pathGradeHandler.GetPathGrade)
+
+	
 
 	r.Run(":8000")
 }
