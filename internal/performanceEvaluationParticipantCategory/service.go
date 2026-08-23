@@ -1,4 +1,4 @@
-package performanceEvaluationParticipantCategoryItems
+package performanceEvaluationParticipantCategory
 
 import "training-app/internal/models"
 
@@ -12,14 +12,14 @@ func NewService(repo *Repository) *Service {
 	}
 }
 
-func (s *Service) GetAll(clientID int) ([]models.PerformanceEvaluationParticipantCategoryItem, error) {
+func (s *Service) GetAll(clientID int) ([]models.PerformanceEvaluationParticipantCategory, error) {
 
 	repo := s.repo.ForClient(clientID)
 
 	return repo.GetAll()
 }
 
-func (s *Service) GetByID(clientID int, id int) (*models.PerformanceEvaluationParticipantCategoryItem, error) {
+func (s *Service) GetByID(clientID int, id int) (*models.PerformanceEvaluationParticipantCategory, error) {
 
 	repo := s.repo.ForClient(clientID)
 

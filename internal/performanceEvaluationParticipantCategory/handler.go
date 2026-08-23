@@ -1,4 +1,4 @@
-package performanceEvaluationParticipantCategoryItems
+package performanceEvaluationParticipantCategory
 
 import (
 	"net/http"
@@ -17,12 +17,12 @@ func NewHandler(service *Service) *Handler {
 	}
 }
 
-func (h *Handler) ListPerformanceEvaluationParticipantCategoryItems(c *gin.Context) {
+func (h *Handler) ListPerformanceEvaluationParticipantCategories(c *gin.Context) {
 
 	// TODO: replace with c.MustGet("clientID").(int)
 	clientID := 2
 
-	items, err := h.service.GetAll(clientID)
+	pCats, err := h.service.GetAll(clientID)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -31,10 +31,10 @@ func (h *Handler) ListPerformanceEvaluationParticipantCategoryItems(c *gin.Conte
 		return
 	}
 
-	c.JSON(http.StatusOK, items)
+	c.JSON(http.StatusOK, pCats)
 }
 
-func (h *Handler) GetPerformanceEvaluationParticipantCategoryItem(c *gin.Context) {
+func (h *Handler) GetPerformanceEvaluationParticipantCategory(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -48,7 +48,7 @@ func (h *Handler) GetPerformanceEvaluationParticipantCategoryItem(c *gin.Context
 	// TODO: replace with c.MustGet("clientID").(int)
 	clientID := 2
 
-	item, err := h.service.GetByID(clientID, id)
+	pCats, err := h.service.GetByID(clientID, id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -57,5 +57,5 @@ func (h *Handler) GetPerformanceEvaluationParticipantCategoryItem(c *gin.Context
 		return
 	}
 
-	c.JSON(http.StatusOK, item)
+	c.JSON(http.StatusOK, pCats)
 }

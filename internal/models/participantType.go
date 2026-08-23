@@ -8,5 +8,4 @@ type ParticipantType struct {
 	ClientID int    `gorm:"column:client_id;not null" json:"client_id"`
 	Client   Client `gorm:"foreignKey:ClientID;references:ID" json:"client"`
 
-	PerformanceEvaluationParticipantCategoryItems []PerformanceEvaluationParticipantCategoryItem `gorm:"foreignKey:ParticipantTypeID;references:ID" json:"performance_evaluation_participant_category_items"`
 }

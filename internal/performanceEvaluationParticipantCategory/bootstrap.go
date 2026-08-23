@@ -1,4 +1,4 @@
-package performanceEvaluationParticipantCategoryItems
+package performanceEvaluationParticipantCategory
 
 import "gorm.io/gorm"
 

@@ -2,7 +2,6 @@ package main
 
 import (
 	"training-app/db"
-	performanceEvaluationParticipantCategoryItems "training-app/internal/PerformanceEvaluationParticipantCategoryItems"
 	"training-app/internal/clients"
 	"training-app/internal/countries"
 	"training-app/internal/courseParticipantFinalExam"
@@ -29,6 +28,7 @@ import (
 	"training-app/internal/pathGrades"
 	"training-app/internal/performanceEvaluationCategories"
 	"training-app/internal/performanceEvaluationItems"
+	"training-app/internal/performanceEvaluationParticipantCategory"
 	"training-app/internal/persons"
 	"training-app/internal/qualificationTypes"
 	"training-app/internal/qualifications"
@@ -257,18 +257,17 @@ func main() {
 	r.GET("/participant-types", participantTypeHandler.ListParticipantTypes)		
 	r.GET("/participant-type/:id", participantTypeHandler.GetParticipantType)
 
-	// performance evaluation participant category items
-	performanceEvaluationParticipantCategoryItemHandler := performanceEvaluationParticipantCategoryItems.New(db.DB)
-
-	r.GET("/performance-evaluation-participant-category-item/:id", performanceEvaluationParticipantCategoryItemHandler.GetPerformanceEvaluationParticipantCategoryItem)
-	r.GET("/performance-evaluation-participant-category-items", performanceEvaluationParticipantCategoryItemHandler.ListPerformanceEvaluationParticipantCategoryItems)
-
 	// path grades
 	pathGradeHandler := pathGrades.New(db.DB)
 
 	r.GET("/path-grades", pathGradeHandler.ListPathGrades)
 	r.GET("/path-grade/:id", pathGradeHandler.GetPathGrade)
 
+	// performance evaluation participant categories
+	performanceEvaluationParticipantCategoryHandler := performanceEvaluationParticipantCategory.New(db.DB)
+
+	r.GET("/performance-evaluation-participant-categories", performanceEvaluationParticipantCategoryHandler.ListPerformanceEvaluationParticipantCategories)		
+	r.GET("/performance-evaluation-participant-category/:id", performanceEvaluationParticipantCategoryHandler.GetPerformanceEvaluationParticipantCategory)
 	
 
 	r.Run(":8000")

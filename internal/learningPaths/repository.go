@@ -38,6 +38,7 @@ func (r *Repository) GetAll() ([]models.LearningPath, error) {
 
 	err := r.db.
 		Preload("Client").
+		Preload("QualificationType").
 		Find(&learningPaths).Error
 
 	return learningPaths, err
@@ -49,6 +50,7 @@ func (r *Repository) GetByID(id int) (*models.LearningPath, error) {
 
 	err := r.db.
 		Preload("Client").
+		Preload("QualificationType").
 		First(&learningPath, id).Error
 
 	if err != nil {
