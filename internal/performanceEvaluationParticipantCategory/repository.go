@@ -41,6 +41,7 @@ func (r *Repository) GetAll() ([]models.PerformanceEvaluationParticipantCategory
 		Preload("ParticipantType").
 		Preload("PerformanceEvaluationCategory").
 		Preload("Items").
+		Preload("Items.PerformanceEvaluationItem").
 		Find(&pCats).Error
 
 	return pCats, err

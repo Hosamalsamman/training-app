@@ -13,11 +13,9 @@ func NewService(repo *Repository) *Service {
 }
 
 func (s *Service) GetAll(clientID int) ([]models.Client, error) {
-	repo := s.repo.ForClient(clientID)
-	return repo.GetAll()
+	return s.repo.GetAll()
 }
 
 func (s *Service) GetByID(clientID int, id int) (*models.Client, error) {
-	repo := s.repo.ForClient(clientID)
-	return repo.GetByID(id)
+	return s.repo.GetByID(id)
 }

@@ -29,6 +29,7 @@ import (
 	"training-app/internal/performanceEvaluationCategories"
 	"training-app/internal/performanceEvaluationItems"
 	"training-app/internal/performanceEvaluationParticipantCategory"
+	"training-app/internal/performanceEvaluationParticipantCategoryItems"
 	"training-app/internal/persons"
 	"training-app/internal/qualificationTypes"
 	"training-app/internal/qualifications"
@@ -269,6 +270,11 @@ func main() {
 	r.GET("/performance-evaluation-participant-categories", performanceEvaluationParticipantCategoryHandler.ListPerformanceEvaluationParticipantCategories)		
 	r.GET("/performance-evaluation-participant-category/:id", performanceEvaluationParticipantCategoryHandler.GetPerformanceEvaluationParticipantCategory)
 	
+	// performance evaluation participant category items
+	performanceEvaluationParticipantCategoryItemHandler := performanceEvaluationParticipantCategoryItems.New(db.DB)
+
+	r.GET("/performance-evaluation-participant-category-items", performanceEvaluationParticipantCategoryItemHandler.ListPerformanceEvaluationParticipantCategoryItems)	
+	r.GET("/performance-evaluation-participant-category-item/:id", performanceEvaluationParticipantCategoryItemHandler.GetPerformanceEvaluationParticipantCategoryItem)
 
 	r.Run(":8000")
 }
