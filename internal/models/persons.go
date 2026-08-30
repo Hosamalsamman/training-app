@@ -32,7 +32,7 @@ type Person struct {
 	JobTypeGroupID *int          `gorm:"column:job_type_group" json:"job_type_group"`
 	JobTypeGroup   *JobTypeGroup `gorm:"foreignKey:JobTypeGroupID" json:"job_type_group_data"`
 
-	CurrentLearningPathID int          `gorm:"column:current_learning_path_id;not null" json:"current_learning_path_id"`
+	CurrentLearningPathID *int          `gorm:"column:current_learning_path_id;not null" json:"current_learning_path_id"`
 	CurrentLearningPath   LearningPath `gorm:"foreignKey:CurrentLearningPathID" json:"current_learning_path"`
 
 	CurrentGradeID int   `gorm:"column:current_grade;not null" json:"current_grade"`
@@ -48,7 +48,8 @@ type Person struct {
 	TrainerCertifyingOrganization   *Organization `gorm:"foreignKey:TrainerCertifyingOrganizationID" json:"trainer_certifying_organization"`
 
 	Username     *string `gorm:"column:username;size:500" json:"user_name"`
-	Password *string `gorm:"column:password;size:500"`
+	Password     *string `gorm:"column:password;size:500" json:"-"`
+	GroupID      *int    `gorm:"column:group_id" json:"group_id"`
 
 	ClientID int    `gorm:"column:client_id;not null" json:"client_id"`
 	Client   Client `gorm:"foreignKey:ClientID" json:"client"`
@@ -74,7 +75,16 @@ type CreatePersonRequest struct {
     JobID                 int     `json:"job_id"`
     OrganizationID        int     `json:"organization_id"`
     DepartmentID          int     `json:"department_id"`
+	WorkSiteID             *int    `json:"work_site_id"`
+	JobTypeGroupID        *int    `json:"job_type_group_id"`
+	CurrentLearningPathID *int     `json:"current_learning_path_id"`
+}
 
-    Username     *string `json:"username"`
-    Password *string `json:"password"`
+// RegisterUserRequest is the payload for turning an existing person
+// (one that has no credentials yet) into a user.
+type RegisterUserRequest struct {
+	PersonID int    `json:"person_id" binding:"required"`
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required,min=6"`
+	GroupID  int    `json:"group_id" binding:"required"`
 }
