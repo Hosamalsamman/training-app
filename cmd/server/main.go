@@ -15,6 +15,7 @@ import (
 	"training-app/internal/evaluationType"
 	"training-app/internal/governorates"
 	"training-app/internal/grades"
+	"training-app/internal/groups"
 	"training-app/internal/jobTypeGroups"
 	"training-app/internal/jobs"
 	"training-app/internal/learningPaths"
@@ -169,6 +170,18 @@ func main() {
 	r.GET("/persons", personHandler.ListPersons)
 	r.GET("/person/:id", personHandler.GetPerson)
 	r.POST("/new-person", personHandler.Create)
+
+	// register user: turn an existing person into a user
+	r.POST("/register-user", personHandler.RegisterUser)
+
+	// groups
+	groupHandler := groups.New(db.DB)
+
+	r.GET("/groups", groupHandler.ListGroups)
+	r.GET("/group/:id", groupHandler.GetGroup)
+
+	// groups the authenticated user is allowed to assign users to
+	r.GET("/allowed-groups", groupHandler.ListAllowedGroups)
 
 	// departments
 	departmentHandler := departments.New(db.DB)

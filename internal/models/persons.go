@@ -35,8 +35,8 @@ type Person struct {
 	CurrentLearningPathID *int         `gorm:"column:current_learning_path_id;not null" json:"current_learning_path_id"`
 	CurrentLearningPath   LearningPath `gorm:"foreignKey:CurrentLearningPathID" json:"current_learning_path"`
 
-	CurrentGradeID int   `gorm:"column:current_grade;not null" json:"current_grade"`
-	CurrentGrade   Grade `gorm:"foreignKey:CurrentGradeID" json:"current_grade_data"`
+	CurrentGradeID *int   `gorm:"column:current_grade;not null" json:"current_grade"`
+	CurrentGrade   *Grade `gorm:"foreignKey:CurrentGradeID" json:"current_grade_data"`
 
 	DateOfCurrentGrade *time.Time `gorm:"column:date_ofcurrentgarde" json:"date_of_current_grade"`
 	ContractDate       *time.Time `gorm:"column:contract_date" json:"contract_date"`
@@ -68,16 +68,22 @@ func (Person) TableName() string {
 }
 
 type CreatePersonRequest struct {
-	Code                  *string `json:"code"`
-	Name                  string  `json:"name"`
-	GovernorateID         int     `json:"governorate_id"`
-	QualificationID       int     `json:"qualification_id"`
-	JobID                 int     `json:"job_id"`
-	OrganizationID        int     `json:"organization_id"`
-	DepartmentID          int     `json:"department_id"`
-	WorkSiteID            *int    `json:"work_site_id"`
-	JobTypeGroupID        *int    `json:"job_type_group_id"`
-	CurrentLearningPathID *int    `json:"current_learning_path_id"`
+	Code                            *string    `json:"code"`
+	Name                            string     `json:"name"`
+	GovernorateID                   int        `json:"governorate_id"`
+	Address                         *string    `json:"address"`
+	TelephoneWhatsapp               *string    `json:"telephone_whatsapp"`
+	QualificationID                 int        `json:"qualification_id"`
+	JobID                           int        `json:"job_id"`
+	OrganizationID                  int        `json:"organization_id"`
+	DepartmentID                    int        `json:"department_id"`
+	WorkSiteID                      *int       `json:"work_site_id"`
+	JobTypeGroupID                  *int       `json:"job_type_group_id"`
+	CurrentLearningPathID           *int       `json:"current_learning_path_id"`
+	CurrentGradeID                  *int        `json:"current_grade_id"`
+	ContractDate                    *time.Time `json:"contract_date"`
+	IsTrainer                       bool       `json:"is_trainer"`
+	TrainerCertifyingOrganizationID *int       `json:"trainer_certifying_organization_id"`
 }
 
 // RegisterUserRequest is the payload for turning an existing person

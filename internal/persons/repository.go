@@ -93,3 +93,42 @@ func (r *Repository) GetByID(id int) (*models.Person, error) {
 func (r *Repository) Create(person *models.Person) error {
 	return r.db.Create(person).Error
 }
+
+// UpdateCredentials sets the username, hashed password and
+// group of an existing person. It is called on a client-scoped
+// repository so the update cannot cross tenants.
+func (r *Repository) UpdateCredentials(
+	personID int,
+	username string,
+	hashedPassword string,
+	groupID int,
+) error {
+
+	return r.db.Model(&models.Person{}).
+		Where("id = ?", personID).
+		Updates(map[string]any{
+			"username": username,
+			"password": hashedPassword,
+			"group_id": groupID,
+		}).Error
+}
+
+// GetGroupID returns only the group of a person without
+// loading any associations. It is used by the groups module
+// to decide which groups a user may be assigned to. It is
+// called on a client-scoped repository so the lookup cannot
+// cross tenants.
+func (r *Repository) GetGroupID(personID int) (*int, error) {
+
+	var person models.Person
+
+	err := r.db.
+		Select("id", "group_id").
+		First(&person, personID).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return person.GroupID, nil
+}
