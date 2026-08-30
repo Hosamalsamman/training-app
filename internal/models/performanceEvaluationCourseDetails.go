@@ -12,6 +12,8 @@ type PerformanceEvaluationCourseDetail struct {
 
 	Score float64 `gorm:"column:score;not null" json:"score"`
 
+	Notes *string `gorm:"column:notes;size:4000" json:"notes"`
+
 	EnteredByID int    `gorm:"column:entered_by;not null" json:"entered_by"`
 	EnteredBy   Person `gorm:"foreignKey:EnteredByID;references:ID" json:"entered_by_person"`
 

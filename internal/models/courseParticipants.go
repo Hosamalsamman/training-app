@@ -12,5 +12,6 @@ type CourseParticipant struct {
 	ClientID int    `gorm:"column:client_id;not null" json:"client_id"`
 	Client   Client `gorm:"foreignKey:ClientID;references:ID" json:"client"`
 
-	FinalExams []CourseParticipantFinalExam `gorm:"foreignKey:CourseParticipantID;references:ID" json:"final_exams"`
+	FinalExams                   []CourseParticipantFinalExam                   `gorm:"foreignKey:CourseParticipantID;references:ID" json:"final_exams"`
+	PerformanceEvaluationDetails []PerformanceEvaluationCourseParticipantDetail `gorm:"foreignKey:CourseParticipantID;references:ID" json:"performance_evaluation_details,omitempty"`
 }

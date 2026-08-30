@@ -23,10 +23,12 @@ import (
 	"training-app/internal/organizations"
 	"training-app/internal/organizationtypes"
 	"training-app/internal/participantType"
-	"training-app/internal/pathGradeSubjectTerms"
+	pathGradeSubjectTerm "training-app/internal/pathGradeSubjectTerms"
 	"training-app/internal/pathGradeSubjects"
 	"training-app/internal/pathGrades"
 	"training-app/internal/performanceEvaluationCategories"
+	"training-app/internal/performanceEvaluationCourseDetails"
+	"training-app/internal/performanceEvaluationCourseParticipantDetails"
 	"training-app/internal/performanceEvaluationItems"
 	"training-app/internal/performanceEvaluationParticipantCategory"
 	"training-app/internal/performanceEvaluationParticipantCategoryItems"
@@ -55,7 +57,6 @@ func main() {
 	db.Connect()
 
 	r := gin.Default()
-
 
 	// r.GET("/", handlers.Home)
 	// r.GET("/db-check", handlers.DbCheck)
@@ -167,6 +168,7 @@ func main() {
 
 	r.GET("/persons", personHandler.ListPersons)
 	r.GET("/person/:id", personHandler.GetPerson)
+	r.POST("/new-person", personHandler.Create)
 
 	// departments
 	departmentHandler := departments.New(db.DB)
@@ -206,7 +208,7 @@ func main() {
 
 	// documentation types
 	documentationTypeHandler := documentationType.New(db.DB)
-	
+
 	r.GET("/documentation-types", documentationTypeHandler.ListDocTypes)
 	r.GET("/documentation-type/:id", documentationTypeHandler.GetDocType)
 
@@ -237,25 +239,25 @@ func main() {
 	// course participant final exams
 	courseParticipantFinalExamHandler := courseParticipantFinalExam.New(db.DB)
 
-	r.GET("/course-participant-final-exams", courseParticipantFinalExamHandler.ListCourseParticipantsFinalExams)	
+	r.GET("/course-participant-final-exams", courseParticipantFinalExamHandler.ListCourseParticipantsFinalExams)
 	r.GET("/course-participant-final-exam/:id", courseParticipantFinalExamHandler.GetCourseParticipantFinalExam)
 
 	// performance evaluation categories
 	performanceEvaluationCategoryHandler := performanceEvaluationCategories.New(db.DB)
 
-	r.GET("/performance-evaluation-categories", performanceEvaluationCategoryHandler.ListPerformanceEvaluationCategories)	
+	r.GET("/performance-evaluation-categories", performanceEvaluationCategoryHandler.ListPerformanceEvaluationCategories)
 	r.GET("/performance-evaluation-category/:id", performanceEvaluationCategoryHandler.GetPerformanceEvaluationCategory)
 
 	// performance evaluation items
 	performanceEvaluationItemHandler := performanceEvaluationItems.New(db.DB)
 
-	r.GET("/performance-evaluation-items", performanceEvaluationItemHandler.ListPerformanceEvaluationItems)		
+	r.GET("/performance-evaluation-items", performanceEvaluationItemHandler.ListPerformanceEvaluationItems)
 	r.GET("/performance-evaluation-item/:id", performanceEvaluationItemHandler.GetPerformanceEvaluationItem)
 
 	// participant types
 	participantTypeHandler := participantType.New(db.DB)
 
-	r.GET("/participant-types", participantTypeHandler.ListParticipantTypes)		
+	r.GET("/participant-types", participantTypeHandler.ListParticipantTypes)
 	r.GET("/participant-type/:id", participantTypeHandler.GetParticipantType)
 
 	// path grades
@@ -267,14 +269,26 @@ func main() {
 	// performance evaluation participant categories
 	performanceEvaluationParticipantCategoryHandler := performanceEvaluationParticipantCategory.New(db.DB)
 
-	r.GET("/performance-evaluation-participant-categories", performanceEvaluationParticipantCategoryHandler.ListPerformanceEvaluationParticipantCategories)		
+	r.GET("/performance-evaluation-participant-categories", performanceEvaluationParticipantCategoryHandler.ListPerformanceEvaluationParticipantCategories)
 	r.GET("/performance-evaluation-participant-category/:id", performanceEvaluationParticipantCategoryHandler.GetPerformanceEvaluationParticipantCategory)
-	
+
 	// performance evaluation participant category items
 	performanceEvaluationParticipantCategoryItemHandler := performanceEvaluationParticipantCategoryItems.New(db.DB)
 
-	r.GET("/performance-evaluation-participant-category-items", performanceEvaluationParticipantCategoryItemHandler.ListPerformanceEvaluationParticipantCategoryItems)	
+	r.GET("/performance-evaluation-participant-category-items", performanceEvaluationParticipantCategoryItemHandler.ListPerformanceEvaluationParticipantCategoryItems)
 	r.GET("/performance-evaluation-participant-category-item/:id", performanceEvaluationParticipantCategoryItemHandler.GetPerformanceEvaluationParticipantCategoryItem)
+
+	// performance evaluation course details
+	performanceEvaluationCourseDetailHandler := performanceEvaluationCourseDetails.New(db.DB)
+
+	r.GET("/performance-evaluation-course-details", performanceEvaluationCourseDetailHandler.ListPerformanceEvaluationCourseDetails)
+	r.GET("/performance-evaluation-course-detail/:id", performanceEvaluationCourseDetailHandler.GetPerformanceEvaluationCourseDetail)
+
+	// performance evaluation course participant details
+	performanceEvaluationCourseParticipantDetailHandler := performanceEvaluationCourseParticipantDetails.New(db.DB)
+
+	r.GET("/performance-evaluation-course-participant-details", performanceEvaluationCourseParticipantDetailHandler.ListPerformanceEvaluationCourseParticipantDetails)
+	r.GET("/performance-evaluation-course-participant-detail/:id", performanceEvaluationCourseParticipantDetailHandler.GetPerformanceEvaluationCourseParticipantDetail)
 
 	r.Run(":8000")
 }

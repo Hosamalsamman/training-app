@@ -3,6 +3,8 @@ package persons
 import (
 	"net/http"
 	"strconv"
+	"training-app/internal/dbutil"
+	"training-app/internal/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -57,4 +59,34 @@ func (h *Handler) GetPerson(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, person)
+}
+
+func (h *Handler) Create(c *gin.Context) {
+
+	var req models.CreatePersonRequest
+
+	// Convert JSON body into our request struct.
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "بيانات الطلب غير صحيحة.",
+		})
+		return
+	}
+
+	// client_id was placed into the Gin context
+	// by the JWT middleware.
+	clientID := c.GetInt("client_id")
+
+	person, err := h.service.Create(clientID, &req)
+
+	if err != nil {
+		status, message := dbutil.TranslateDBError(err)
+
+		c.JSON(status, gin.H{
+			"error": message,
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, person)
 }

@@ -32,7 +32,7 @@ type Person struct {
 	JobTypeGroupID *int          `gorm:"column:job_type_group" json:"job_type_group"`
 	JobTypeGroup   *JobTypeGroup `gorm:"foreignKey:JobTypeGroupID" json:"job_type_group_data"`
 
-	CurrentLearningPathID *int          `gorm:"column:current_learning_path_id;not null" json:"current_learning_path_id"`
+	CurrentLearningPathID *int         `gorm:"column:current_learning_path_id;not null" json:"current_learning_path_id"`
 	CurrentLearningPath   LearningPath `gorm:"foreignKey:CurrentLearningPathID" json:"current_learning_path"`
 
 	CurrentGradeID int   `gorm:"column:current_grade;not null" json:"current_grade"`
@@ -47,9 +47,9 @@ type Person struct {
 	TrainerCertifyingOrganizationID *int          `gorm:"column:trainer_certifying_organization_id" json:"trainer_certifying_organization_id"`
 	TrainerCertifyingOrganization   *Organization `gorm:"foreignKey:TrainerCertifyingOrganizationID" json:"trainer_certifying_organization"`
 
-	Username     *string `gorm:"column:username;size:500" json:"user_name"`
-	Password     *string `gorm:"column:password;size:500" json:"-"`
-	GroupID      *int    `gorm:"column:group_id" json:"group_id"`
+	Username *string `gorm:"column:username;size:500" json:"user_name"`
+	Password *string `gorm:"column:password;size:500" json:"-"`
+	GroupID  *int    `gorm:"column:group_id" json:"group_id"`
 
 	ClientID int    `gorm:"column:client_id;not null" json:"client_id"`
 	Client   Client `gorm:"foreignKey:ClientID" json:"client"`
@@ -58,9 +58,9 @@ type Person struct {
 
 	CoordinatedCourses []Course `gorm:"foreignKey:CoordinatorID" json:"coordinated_courses,omitempty"`
 
-	TrainerCourses       []Course `gorm:"foreignKey:TrainerID" json:"trainer_courses,omitempty"`
-	BackupTrainerCourses []Course `gorm:"foreignKey:BackupTrainerID" json:"backup_trainer_courses,omitempty"`
-	CourseParticipants []CourseParticipant `gorm:"foreignKey:PersonID;references:ID" json:"course_participants"`
+	TrainerCourses       []Course            `gorm:"foreignKey:TrainerID" json:"trainer_courses,omitempty"`
+	BackupTrainerCourses []Course            `gorm:"foreignKey:BackupTrainerID" json:"backup_trainer_courses,omitempty"`
+	CourseParticipants   []CourseParticipant `gorm:"foreignKey:PersonID;references:ID" json:"course_participants"`
 }
 
 func (Person) TableName() string {
@@ -68,16 +68,16 @@ func (Person) TableName() string {
 }
 
 type CreatePersonRequest struct {
-    Code                  *string `json:"code"`
-    Name                  string  `json:"name"`
-    GovernorateID         int     `json:"governorate_id"`
-    QualificationID       int     `json:"qualification_id"`
-    JobID                 int     `json:"job_id"`
-    OrganizationID        int     `json:"organization_id"`
-    DepartmentID          int     `json:"department_id"`
-	WorkSiteID             *int    `json:"work_site_id"`
+	Code                  *string `json:"code"`
+	Name                  string  `json:"name"`
+	GovernorateID         int     `json:"governorate_id"`
+	QualificationID       int     `json:"qualification_id"`
+	JobID                 int     `json:"job_id"`
+	OrganizationID        int     `json:"organization_id"`
+	DepartmentID          int     `json:"department_id"`
+	WorkSiteID            *int    `json:"work_site_id"`
 	JobTypeGroupID        *int    `json:"job_type_group_id"`
-	CurrentLearningPathID *int     `json:"current_learning_path_id"`
+	CurrentLearningPathID *int    `json:"current_learning_path_id"`
 }
 
 // RegisterUserRequest is the payload for turning an existing person

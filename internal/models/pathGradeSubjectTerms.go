@@ -3,13 +3,13 @@ package models
 type PathGradeSubjectTerm struct {
 	ID int `gorm:"primaryKey;column:id" json:"id"`
 
-	PathGradeSubjectID int `gorm:"column:path_grade_subject_id;not null" json:"path_grade_subjects_id"`
-	PathGradeSubject PathGradeSubject `gorm:"foreignKey:PathGradeSubjectID;references:ID" json:"path_grade_subject"`
+	PathGradeSubjectID int              `gorm:"column:path_grade_subject_id;not null" json:"path_grade_subjects_id"`
+	PathGradeSubject   PathGradeSubject `gorm:"foreignKey:PathGradeSubjectID;references:ID" json:"path_grade_subject"`
 
 	TermID int          `gorm:"column:term_id;not null" json:"term_id"`
 	Term   LearningTerm `gorm:"foreignKey:TermID" json:"term"`
 
-	Code *int `gorm:"column:code" json:"code"`
+	Code *string `gorm:"column:code;size:10" json:"code"`
 
 	Notes *string `gorm:"column:notes;size:2000" json:"notes"`
 

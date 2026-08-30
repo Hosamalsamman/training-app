@@ -89,3 +89,7 @@ func (r *Repository) GetByID(id int) (*models.Person, error) {
 
 	return &person, nil
 }
+
+func (r *Repository) Create(person *models.Person) error {
+	return r.db.Create(person).Error
+}
