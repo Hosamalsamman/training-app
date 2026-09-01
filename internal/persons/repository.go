@@ -113,6 +113,43 @@ func (r *Repository) UpdateCredentials(
 		}).Error
 }
 
+// GetByUsername returns the active person carrying the given
+// username. Usernames are unique, so at most one account can
+// match. It is NOT client-scoped: at login time the tenant is
+// not known yet. Only the columns needed to verify credentials
+// are selected. It is used by the login flow.
+func (r *Repository) GetByUsername(username string) (*models.Person, error) {
+
+	var person models.Person
+
+	err := r.db.
+		Select("id", "name", "client_id", "group_id", "password").
+		Where("username = ? AND is_active = ?", username, true).
+		First(&person).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &person, nil
+}
+
+// GroupExists reports whether a group with the given id exists.
+// groups is a global lookup table (no client_id), so this must be
+// called on a repository that is NOT client-scoped. It is used by
+// the register-user flow to reject unknown groups.
+func (r *Repository) GroupExists(id int) (bool, error) {
+
+	var count int64
+
+	err := r.db.
+		Model(&models.Group{}).
+		Where("id = ?", id).
+		Count(&count).Error
+
+	return count > 0, err
+}
+
 // GetGroupID returns only the group of a person without
 // loading any associations. It is used by the groups module
 // to decide which groups a user may be assigned to. It is

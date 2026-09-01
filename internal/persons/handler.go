@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"training-app/internal/auth"
 	"training-app/internal/dbutil"
 	"training-app/internal/models"
 
@@ -12,11 +13,13 @@ import (
 
 type Handler struct {
 	service *Service
+	secret  string
 }
 
-func NewHandler(service *Service) *Handler {
+func NewHandler(service *Service, secret string) *Handler {
 	return &Handler{
 		service: service,
+		secret:  secret,
 	}
 }
 
@@ -108,11 +111,13 @@ func (h *Handler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	// client_id was placed into the Gin context
-	// by the JWT middleware.
+	// client_id and user_id were placed into the Gin context
+	// by the JWT middleware. user_id is needed to check which
+	// groups the authenticated user may assign.
 	clientID := c.GetInt("client_id")
+	userID := c.GetInt("user_id")
 
-	person, err := h.service.RegisterUser(clientID, &req)
+	person, err := h.service.RegisterUser(clientID, userID, &req)
 
 	if err != nil {
 
@@ -130,6 +135,37 @@ func (h *Handler) RegisterUser(c *gin.Context) {
 				"error": "الشخص مسجل بالفعل كمستخدم.",
 			})
 
+		// The authenticated user does not exist for this client.
+		case errors.Is(err, ErrUserNotFound):
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Not Found",
+			})
+
+		// The authenticated user has no group, so he cannot
+		// assign anyone.
+		case errors.Is(err, ErrCallerHasNoGroup):
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": "لا يمكن إتمام العملية لأن حسابك غير مرتبط بمجموعة.",
+			})
+
+		// The requested group is above the caller's own group.
+		case errors.Is(err, ErrGroupNotAllowed):
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": "لا يمكنك إسناد مستخدم إلى مجموعة أعلى من مجموعتك.",
+			})
+
+		// The requested group does not exist.
+		case errors.Is(err, ErrGroupNotFound):
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "المجموعة المحددة غير موجودة.",
+			})
+
+		// The username became empty after normalization.
+		case errors.Is(err, ErrInvalidUsername):
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "يرجى إدخال اسم مستخدم صحيح.",
+			})
+
 		// Anything else is a database error.
 		default:
 			status, message := dbutil.TranslateDBError(err)
@@ -142,4 +178,79 @@ func (h *Handler) RegisterUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, person)
+}
+
+// Login verifies the credentials and issues a JWT that the
+// client must send as "Authorization: Bearer <token>" on
+// every authenticated route.
+func (h *Handler) Login(c *gin.Context) {
+
+	var req models.LoginRequest
+
+	// Convert JSON body into our request struct.
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "بيانات الطلب غير صحيحة.",
+		})
+		return
+	}
+
+	person, err := h.service.Login(req.Username, req.Password)
+
+	if err != nil {
+
+		// One generic message for wrong username, wrong
+		// password or unknown user, so the response does
+		// not leak which part failed.
+		if errors.Is(err, ErrInvalidCredentials) {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error": "اسم المستخدم أو كلمة المرور غير صحيحة.",
+			})
+			return
+		}
+
+		// Anything else is a database error.
+		status, message := dbutil.TranslateDBError(err)
+
+		c.JSON(status, gin.H{
+			"error": message,
+		})
+		return
+	}
+
+	// Sign the token with the id of the person and his client,
+	// exactly what the JWT middleware later puts back into the
+	// Gin context as user_id and client_id.
+	token, err := auth.GenerateToken(person.ID, person.ClientID, h.secret)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "تعذر إنشاء الجلسة، يرجى المحاولة مرة أخرى.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"token": token,
+		"user": gin.H{
+			"id":        person.ID,
+			"name":      person.Name,
+			"group_id":  person.GroupID,
+			"client_id": person.ClientID,
+		},
+	})
+}
+
+// Logout ends the session on the client side. JWTs are
+// stateless: the server cannot revoke a token it already
+// signed without keeping a denylist, so the client is
+// responsible for discarding the token it received from
+// /login. The route still requires a valid token (see the
+// authenticated route group in cmd/server/main.go), so it
+// doubles as a server-side token check.
+func (h *Handler) Logout(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "تم تسجيل الخروج بنجاح.",
+	})
 }

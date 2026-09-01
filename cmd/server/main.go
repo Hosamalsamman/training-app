@@ -2,6 +2,7 @@ package main
 
 import (
 	"training-app/db"
+	"training-app/internal/auth"
 	"training-app/internal/clients"
 	"training-app/internal/countries"
 	"training-app/internal/courseParticipantFinalExam"
@@ -45,6 +46,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
 )
@@ -56,6 +58,13 @@ func main() {
 		log.Fatal("Error loading .env")
 	}
 	db.Connect()
+
+	// Secret used to sign and verify JWTs.
+	jwtSecret := os.Getenv("JWT_SECRET")
+
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET is not set")
+	}
 
 	r := gin.Default()
 
@@ -165,14 +174,11 @@ func main() {
 	r.GET("/path-grade-subject-term/:id", pathGradeSubjectTermHandler.GetPathGradeSubjectTerm)
 
 	// persons
-	personHandler := persons.New(db.DB)
+	personHandler := persons.New(db.DB, jwtSecret)
 
 	r.GET("/persons", personHandler.ListPersons)
 	r.GET("/person/:id", personHandler.GetPerson)
 	r.POST("/new-person", personHandler.Create)
-
-	// register user: turn an existing person into a user
-	r.POST("/register-user", personHandler.RegisterUser)
 
 	// groups
 	groupHandler := groups.New(db.DB)
@@ -180,8 +186,25 @@ func main() {
 	r.GET("/groups", groupHandler.ListGroups)
 	r.GET("/group/:id", groupHandler.GetGroup)
 
-	// groups the authenticated user is allowed to assign users to
-	r.GET("/allowed-groups", groupHandler.ListAllowedGroups)
+	// authentication
+	// login is public: it issues the token required by
+	// every authenticated route below.
+	r.POST("/login", personHandler.Login)
+
+	// routes that require a valid JWT
+	authed := r.Group("/")
+	authed.Use(auth.JWTMiddleware(jwtSecret))
+	{
+		// logout: the token itself is stateless, so the
+		// client discards it after calling this route.
+		authed.POST("/logout", personHandler.Logout)
+
+		// register user: turn an existing person into a user
+		authed.POST("/register-user", personHandler.RegisterUser)
+
+		// groups the authenticated user is allowed to assign users to
+		authed.GET("/allowed-groups", groupHandler.ListAllowedGroups)
+	}
 
 	// departments
 	departmentHandler := departments.New(db.DB)

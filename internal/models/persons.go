@@ -94,3 +94,9 @@ type RegisterUserRequest struct {
 	Password string `json:"password" binding:"required,min=6"`
 	GroupID  int    `json:"group_id" binding:"required"`
 }
+
+// LoginRequest is the payload for the login route.
+type LoginRequest struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
