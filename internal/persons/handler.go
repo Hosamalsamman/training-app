@@ -65,6 +65,32 @@ func (h *Handler) GetPerson(c *gin.Context) {
 	c.JSON(http.StatusOK, person)
 }
 
+// ListUsers returns the client's registered users: persons
+// who already have credentials. The admin picks a reset
+// target from this list, so he cannot select a person
+// without a user.
+func (h *Handler) ListUsers(c *gin.Context) {
+
+	// client_id was placed into the Gin context
+	// by the JWT middleware.
+	clientID := c.GetInt("client_id")
+
+	users, err := h.service.GetAllUsers(clientID)
+
+	if err != nil {
+
+		// Anything else is a database error.
+		status, message := dbutil.TranslateDBError(err)
+
+		c.JSON(status, gin.H{
+			"error": message,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, users)
+}
+
 func (h *Handler) Create(c *gin.Context) {
 
 	var req models.CreatePersonRequest
@@ -152,12 +178,6 @@ func (h *Handler) RegisterUser(c *gin.Context) {
 		case errors.Is(err, ErrGroupNotAllowed):
 			c.JSON(http.StatusForbidden, gin.H{
 				"error": "لا يمكنك إسناد مستخدم إلى مجموعة أعلى من مجموعتك.",
-			})
-
-		// The requested group does not exist.
-		case errors.Is(err, ErrGroupNotFound):
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "المجموعة المحددة غير موجودة.",
 			})
 
 		// The username became empty after normalization.
@@ -252,5 +272,148 @@ func (h *Handler) Logout(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "تم تسجيل الخروج بنجاح.",
+	})
+}
+
+// ChangePassword lets the authenticated user change his own
+// password after proving he knows the old one.
+func (h *Handler) ChangePassword(c *gin.Context) {
+
+	var req models.ChangePasswordRequest
+
+	// Convert JSON body into our request struct.
+	// The binding tags enforce the required fields
+	// and the minimum password length.
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "بيانات الطلب غير صحيحة.",
+		})
+		return
+	}
+
+	// client_id and user_id were placed into the Gin context
+	// by the JWT middleware. The user can only change his
+	// own password, and the id comes from the signed token,
+	// never from the request.
+	clientID := c.GetInt("client_id")
+	userID := c.GetInt("user_id")
+
+	err := h.service.ChangePassword(clientID, userID, &req)
+
+	if err != nil {
+
+		switch {
+
+		// The authenticated user does not exist for this client.
+		case errors.Is(err, ErrUserNotFound):
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Not Found",
+			})
+
+		// The person has no credentials yet, so there is
+		// no password to change.
+		case errors.Is(err, ErrNotRegistered):
+			c.JSON(http.StatusConflict, gin.H{
+				"error": "الحساب غير مسجل كمستخدم.",
+			})
+
+		// The old password did not match the stored hash.
+		case errors.Is(err, ErrWrongOldPassword):
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "كلمة المرور القديمة غير صحيحة.",
+			})
+
+		// Anything else is a database error.
+		default:
+			status, message := dbutil.TranslateDBError(err)
+
+			c.JSON(status, gin.H{
+				"error": message,
+			})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "تم تغيير كلمة المرور بنجاح.",
+	})
+}
+
+// ResetPassword lets an admin (group 1) set a new password
+// for another user without the old one.
+func (h *Handler) ResetPassword(c *gin.Context) {
+
+	var req models.ResetPasswordRequest
+
+	// Convert JSON body into our request struct.
+	// The binding tags enforce the required fields
+	// and the minimum password length.
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "بيانات الطلب غير صحيحة.",
+		})
+		return
+	}
+
+	// client_id and user_id were placed into the Gin context
+	// by the JWT middleware. user_id is needed to check that
+	// the caller is an admin.
+	clientID := c.GetInt("client_id")
+	userID := c.GetInt("user_id")
+
+	// The target person comes from the URL, not the body.
+	targetID, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid id",
+		})
+		return
+	}
+
+	err = h.service.ResetPassword(clientID, userID, targetID, &req)
+
+	if err != nil {
+
+		switch {
+
+		// The caller does not exist for this client.
+		case errors.Is(err, ErrUserNotFound):
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Not Found",
+			})
+
+		// The target person does not exist for this client.
+		case errors.Is(err, ErrPersonNotFound):
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Not Found",
+			})
+
+		// The target person has no credentials yet, so
+		// RegisterUser is the flow that grants them.
+		case errors.Is(err, ErrNotRegistered):
+			c.JSON(http.StatusConflict, gin.H{
+				"error": "الحساب غير مسجل كمستخدم.",
+			})
+
+		// Only admins may reset passwords.
+		case errors.Is(err, ErrNotAdmin):
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": "غير مسموح لك بإعادة تعيين كلمة المرور.",
+			})
+
+		// Anything else is a database error.
+		default:
+			status, message := dbutil.TranslateDBError(err)
+
+			c.JSON(status, gin.H{
+				"error": message,
+			})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "تم إعادة تعيين كلمة المرور بنجاح.",
 	})
 }

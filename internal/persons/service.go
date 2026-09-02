@@ -34,6 +34,15 @@ func (s *Service) GetByID(clientID int, id int) (*models.Person, error) {
 	return repo.GetByID(id)
 }
 
+// GetAllUsers returns the client's registered users: the
+// persons who already have credentials. The frontend uses it
+// to render the users an admin may pick as a reset-password
+// target, so he cannot select a person without a user.
+func (s *Service) GetAllUsers(clientID int) ([]models.UserSummary, error) {
+
+	return s.repo.ForClient(clientID).GetAllUsers()
+}
+
 func (s *Service) Create(
 	clientID int,
 	req *models.CreatePersonRequest,
@@ -89,7 +98,11 @@ func (s *Service) Create(
 	return &person, nil
 }
 
-// Sentinel errors for the register-user flow.
+// AdminGroupID is the group id assigned to administrator
+// users. Only admins may reset other users' passwords.
+const AdminGroupID = 1
+
+// Sentinel errors for the register-user, password flows.
 // The handler maps them to proper HTTP status codes.
 var (
 	ErrPersonNotFound = errors.New("person not found")
@@ -101,14 +114,20 @@ var (
 	ErrCallerHasNoGroup = errors.New("authenticated user has no group assigned")
 	// The requested group is above the caller's own group.
 	ErrGroupNotAllowed = errors.New("group is not allowed for this user")
-	// The requested group does not exist.
-	ErrGroupNotFound = errors.New("group does not exist")
 	// The username became empty after normalization.
 	ErrInvalidUsername = errors.New("username is empty")
 	// Login failed: wrong username or wrong password.
 	// Deliberately vague so the response cannot reveal
 	// which part was wrong.
 	ErrInvalidCredentials = errors.New("invalid username or password")
+	// The supplied old password did not match the stored hash.
+	ErrWrongOldPassword = errors.New("old password is incorrect")
+	// The person has no credentials yet, so there is no
+	// password to change or reset.
+	ErrNotRegistered = errors.New("person is not registered as a user")
+	// The caller is not an admin, so he may not reset
+	// other users' passwords.
+	ErrNotAdmin = errors.New("only admins can reset passwords")
 )
 
 // RegisterUser turns an existing person (one that has no
@@ -167,19 +186,6 @@ func (s *Service) RegisterUser(
 			// even if the frontend only offers allowed groups.
 			if req.GroupID < *callerGroupID {
 				return ErrGroupNotAllowed
-			}
-
-			// The requested group must exist. groups is a global
-			// lookup table, so the check runs without client
-			// scoping.
-			exists, err := s.repo.WithDB(tx).GroupExists(req.GroupID)
-
-			if err != nil {
-				return err
-			}
-
-			if !exists {
-				return ErrGroupNotFound
 			}
 
 			// The person must exist and belong to this client.
@@ -285,4 +291,122 @@ func (s *Service) Login(
 	}
 
 	return person, nil
+}
+
+// ChangePassword lets an authenticated user change his own
+// password. The old password must match the stored hash, so
+// only someone who knows the current one can perform the
+// change. No transaction is needed: the flow is one read and
+// one independent single-column update.
+func (s *Service) ChangePassword(
+	clientID int,
+	userID int,
+	req *models.ChangePasswordRequest,
+) error {
+
+	// Restrict every lookup and the update to the
+	// authenticated client's data.
+	repo := s.repo.ForClient(clientID)
+
+	// The current hash is needed to verify the old password.
+	current, err := repo.GetPasswordByID(userID)
+
+	if err != nil {
+
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ErrUserNotFound
+		}
+
+		return err
+	}
+
+	// A nil password means the person was never registered
+	// as a user, so there is nothing to change here.
+	if current == nil {
+		return ErrNotRegistered
+	}
+
+	// The old password must match, otherwise anyone holding
+	// a valid token could take over the account.
+	if bcrypt.CompareHashAndPassword(
+		[]byte(*current),
+		[]byte(req.OldPassword),
+	) != nil {
+		return ErrWrongOldPassword
+	}
+
+	// Hash the new password. The plain text is never stored.
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(req.NewPassword),
+		bcrypt.DefaultCost,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return repo.UpdatePassword(userID, string(hashedPassword))
+}
+
+// ResetPassword lets an admin (group 1) set a new password
+// for another user without knowing the old one. This is the
+// recovery path for users who forgot their password. The
+// caller's group is read from the database, not from the
+// token, so a demoted admin cannot reuse an old token.
+func (s *Service) ResetPassword(
+	clientID int,
+	callerID int,
+	targetPersonID int,
+	req *models.ResetPasswordRequest,
+) error {
+
+	// Restrict every lookup and the update to the
+	// authenticated client's data.
+	repo := s.repo.ForClient(clientID)
+
+	// Only admins may reset passwords.
+	callerGroupID, err := repo.GetGroupID(callerID)
+
+	if err != nil {
+
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ErrUserNotFound
+		}
+
+		return err
+	}
+
+	if callerGroupID == nil || *callerGroupID != AdminGroupID {
+		return ErrNotAdmin
+	}
+
+	// The target must exist in this client and already be a
+	// registered user; RegisterUser is the flow that grants
+	// initial credentials.
+	target, err := repo.GetPasswordByID(targetPersonID)
+
+	if err != nil {
+
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ErrPersonNotFound
+		}
+
+		return err
+	}
+
+	if target == nil {
+		return ErrNotRegistered
+	}
+
+	// Hash the new password. The plain text is never stored.
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(req.NewPassword),
+		bcrypt.DefaultCost,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return repo.UpdatePassword(targetPersonID, string(hashedPassword))
 }

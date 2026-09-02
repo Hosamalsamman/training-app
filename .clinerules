@@ -1,0 +1,4 @@
+# Workflow rules
+
+- ALWAYS discuss the plan with the user and get explicit agreement BEFORE writing any code. Never jump straight to implementation.
+- The user is a Python/Flask developer learning Go: when presenting plans or code, always explain the structural/architectural differences between the Flask patterns they know (decorators, g object, kwargs injection, blueprints) and the Go/Gin equivalents (middleware chains, gin.Context, constructor wiring, sentinel errors), not just the code itself.

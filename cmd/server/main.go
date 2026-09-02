@@ -204,6 +204,18 @@ func main() {
 
 		// groups the authenticated user is allowed to assign users to
 		authed.GET("/allowed-groups", groupHandler.ListAllowedGroups)
+
+		// change password: any authenticated user, the old
+		// password must match first.
+		authed.POST("/change-password", personHandler.ChangePassword)
+
+		// reset password: admins (group 1) set a new password
+		// for another user without the old one.
+		authed.POST("/person/:id/reset-password", personHandler.ResetPassword)
+
+		// users: the client's registered persons, so the
+		// admin picks a real user as a reset target.
+		authed.GET("/users", personHandler.ListUsers)
 	}
 
 	// departments

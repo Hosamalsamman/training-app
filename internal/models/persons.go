@@ -100,3 +100,31 @@ type LoginRequest struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
+
+// ChangePasswordRequest is the payload for a user changing
+// his own password. The old password is required so only
+// someone who knows the current one can perform the change.
+type ChangePasswordRequest struct {
+	OldPassword string `json:"old_password" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required,min=6"`
+}
+
+// ResetPasswordRequest is the payload for an admin setting a
+// new password for another user. No old password is involved.
+type ResetPasswordRequest struct {
+	NewPassword string `json:"new_password" binding:"required,min=6"`
+}
+
+// UserSummary is the minimal representation of a registered
+// user (a person with credentials) returned by the users
+// list route. It exists so the response carries only what
+// the frontend needs to render a user picker, instead of a
+// full person with all associations.
+type UserSummary struct {
+	ID       int     `gorm:"column:id" json:"id"`
+	Code     *string `gorm:"column:code" json:"code"`
+	Name     string  `gorm:"column:name" json:"name"`
+	Username string  `gorm:"column:username" json:"username"`
+	GroupID  *int    `gorm:"column:group_id" json:"group_id"`
+	IsActive bool    `gorm:"column:is_active" json:"is_active"`
+}
