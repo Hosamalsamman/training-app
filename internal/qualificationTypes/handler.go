@@ -19,8 +19,7 @@ func NewHandler(service *Service) *Handler {
 
 func (h *Handler) ListQualificationTypes(c *gin.Context) {
 
-	// TODO: replace with c.MustGet("clientID").(int)
-	clientID := 2
+	clientID := c.GetInt("client_id")
 
 	qualificationTypes, err := h.service.GetAll(clientID)
 
@@ -45,8 +44,7 @@ func (h *Handler) GetQualificationType(c *gin.Context) {
 		return
 	}
 
-	// TODO: replace with c.MustGet("clientID").(int)
-	clientID := 2
+	clientID := c.GetInt("client_id")
 
 	qualificationType, err := h.service.GetByID(clientID, id)
 

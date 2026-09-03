@@ -19,8 +19,7 @@ func NewHandler(service *Service) *Handler {
 
 func (h *Handler) ListWorkGroups(c *gin.Context) {
 
-	// TODO: replace with c.MustGet("clientID").(int)
-	clientID := 2
+	clientID := c.GetInt("client_id")
 
 	workGroups, err := h.service.GetAll(clientID)
 
@@ -45,8 +44,7 @@ func (h *Handler) GetWorkGroup(c *gin.Context) {
 		return
 	}
 
-	// TODO: replace with c.MustGet("clientID").(int)
-	clientID := 2
+	clientID := c.GetInt("client_id")
 
 	workGroup, err := h.service.GetByID(clientID, id)
 

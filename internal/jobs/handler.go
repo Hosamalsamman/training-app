@@ -22,8 +22,7 @@ func NewHandler(service *Service) *Handler {
 
 func (h *Handler) ListJobs(c *gin.Context) {
 
-	// TODO: replace with c.MustGet("clientID").(int)
-	clientID := 2
+	clientID := c.GetInt("client_id")
 
 	jobs, err := h.service.GetAll(clientID)
 
@@ -52,8 +51,7 @@ func (h *Handler) GetJob(c *gin.Context) {
 		return
 	}
 
-	// TODO: replace with c.MustGet("clientID").(int)
-	clientID := 2
+	clientID := c.GetInt("client_id")
 
 	job, err := h.service.GetByID(clientID, id)
 
@@ -78,7 +76,7 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 
-	clientID := 2 // TODO: from JWT
+	clientID := c.GetInt("client_id")
 
 	_,err := h.service.Create(clientID, &req)  // if you need to return the created object use res instead of _ and replace gin.H with res
 

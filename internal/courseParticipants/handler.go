@@ -22,8 +22,7 @@ func NewHandler(service *Service) *Handler {
 
 func (h *Handler) ListCourseParticipants(c *gin.Context) {
 
-	// TODO: replace with c.MustGet("clientID").(int)
-	clientID := 2
+	clientID := c.GetInt("client_id")
 
 	courseParticipants, err := h.service.GetAll(clientID)
 
@@ -52,8 +51,7 @@ func (h *Handler) GetCourseParticipant(c *gin.Context) {
 		return
 	}
 
-	// TODO: replace with c.MustGet("clientID").(int)
-	clientID := 2
+	clientID := c.GetInt("client_id")
 
 	courseParticipant, err := h.service.GetByID(clientID, id)
 

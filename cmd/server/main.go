@@ -71,129 +71,134 @@ func main() {
 	// r.GET("/", handlers.Home)
 	// r.GET("/db-check", handlers.DbCheck)
 
+	// routes that require a valid JWT.
+	// The middleware verifies the token and stores user_id and
+	// client_id in the request context, so every handler below
+	// can read them with c.GetInt("client_id").
+	// /login is the only public route: it issues the token.
+	authed := r.Group("/")
+	authed.Use(auth.JWTMiddleware(jwtSecret))
+
 	// organization types
 	organizationTypeHandler := organizationtypes.New(db.DB)
 
-	r.GET("/organization-types", organizationTypeHandler.ListOrganizationTypes)
-	r.GET("/organization-type/:id", organizationTypeHandler.GetOrganizationType)
+	authed.GET("/organization-types", organizationTypeHandler.ListOrganizationTypes)
+	authed.GET("/organization-type/:id", organizationTypeHandler.GetOrganizationType)
 
 	// organizations
 	organizationHandler := organizations.New(db.DB)
 
-	r.GET("/organizations", organizationHandler.ListOrganizations)
-	r.GET("/organization/:id", organizationHandler.GetOrganization)
+	authed.GET("/organizations", organizationHandler.ListOrganizations)
+	authed.GET("/organization/:id", organizationHandler.GetOrganization)
 
 	// countries
 	countryHandler := countries.New(db.DB)
 
-	r.GET("/countries", countryHandler.ListCountries)
-	r.GET("/country/:id", countryHandler.GetCountry)
+	authed.GET("/countries", countryHandler.ListCountries)
+	authed.GET("/country/:id", countryHandler.GetCountry)
 
 	// clients
 	clientHandler := clients.New(db.DB)
 
-	r.GET("/clients", clientHandler.ListClients)
-	r.GET("/client/:id", clientHandler.GetClient)
+	authed.GET("/clients", clientHandler.ListClients)
+	authed.GET("/client/:id", clientHandler.GetClient)
 
 	// governorates
 	govHandler := governorates.New(db.DB)
 
-	r.GET("/governorates", govHandler.ListGovernorates)
-	r.GET("/governorate/:id", govHandler.GetGovernorate)
+	authed.GET("/governorates", govHandler.ListGovernorates)
+	authed.GET("/governorate/:id", govHandler.GetGovernorate)
 
 	// gob type groups
 	jobTypeGroupHandler := jobTypeGroups.New(db.DB)
 
-	r.GET("/job-type-groups", jobTypeGroupHandler.ListJobTypeGroups)
-	r.GET("/job-type-group/:id", jobTypeGroupHandler.GetJobTypeGroup)
+	authed.GET("/job-type-groups", jobTypeGroupHandler.ListJobTypeGroups)
+	authed.GET("/job-type-group/:id", jobTypeGroupHandler.GetJobTypeGroup)
 
 	// work centers
 	workCenterHandler := workCenters.New(db.DB)
 
-	r.GET("/work-centers", workCenterHandler.ListWorkCenters)
-	r.GET("/work-center/:id", workCenterHandler.GetWorkCenter)
+	authed.GET("/work-centers", workCenterHandler.ListWorkCenters)
+	authed.GET("/work-center/:id", workCenterHandler.GetWorkCenter)
 
 	// work sites
 	workSiteHandler := workSites.New(db.DB)
 
-	r.GET("/work-sites", workSiteHandler.ListWorkSites)
-	r.GET("/work-site/:id", workSiteHandler.GetWorkSite)
+	authed.GET("/work-sites", workSiteHandler.ListWorkSites)
+	authed.GET("/work-site/:id", workSiteHandler.GetWorkSite)
 
 	// work groups
 	workGroupHandler := workGroups.New(db.DB)
 
-	r.GET("/work-groups", workGroupHandler.ListWorkGroups)
-	r.GET("/work-group/:id", workGroupHandler.GetWorkGroup)
+	authed.GET("/work-groups", workGroupHandler.ListWorkGroups)
+	authed.GET("/work-group/:id", workGroupHandler.GetWorkGroup)
 
 	// qualification types
 	qualificationTypeHandler := qualificationTypes.New(db.DB)
 
-	r.GET("/qualification-types", qualificationTypeHandler.ListQualificationTypes)
-	r.GET("/qualification-type/:id", qualificationTypeHandler.GetQualificationType)
+	authed.GET("/qualification-types", qualificationTypeHandler.ListQualificationTypes)
+	authed.GET("/qualification-type/:id", qualificationTypeHandler.GetQualificationType)
 
 	//qualifications
 	qualificationHandler := qualifications.New(db.DB)
 
-	r.GET("/qualifications", qualificationHandler.ListQualifications)
-	r.GET("/qualification/:id", qualificationHandler.GetQualification)
+	authed.GET("/qualifications", qualificationHandler.ListQualifications)
+	authed.GET("/qualification/:id", qualificationHandler.GetQualification)
 
 	// jobs
 	jobHandler := jobs.New(db.DB)
 
-	r.GET("/jobs", jobHandler.ListJobs)
-	r.GET("/job/:id", jobHandler.GetJob)
+	authed.GET("/jobs", jobHandler.ListJobs)
+	authed.GET("/job/:id", jobHandler.GetJob)
 
 	// grades
 	gradeHandler := grades.New(db.DB)
 
-	r.GET("/grades", gradeHandler.ListGrades)
-	r.GET("/grade/:id", gradeHandler.GetGrade)
+	authed.GET("/grades", gradeHandler.ListGrades)
+	authed.GET("/grade/:id", gradeHandler.GetGrade)
 
 	// learning paths
 	learningPathHandler := learningPaths.New(db.DB)
 
-	r.GET("/learning-paths", learningPathHandler.ListLearningPaths)
-	r.GET("/learning-path/:id", learningPathHandler.GetLearningPath)
+	authed.GET("/learning-paths", learningPathHandler.ListLearningPaths)
+	authed.GET("/learning-path/:id", learningPathHandler.GetLearningPath)
 
 	// learning subjects
 	learningSubjectHandler := learningSubjects.New(db.DB)
 
-	r.GET("/learning-subjects", learningSubjectHandler.ListLearningSubjects)
-	r.GET("/learning-subject/:id", learningSubjectHandler.GetLearningSubject)
+	authed.GET("/learning-subjects", learningSubjectHandler.ListLearningSubjects)
+	authed.GET("/learning-subject/:id", learningSubjectHandler.GetLearningSubject)
 
 	// path grade subjects
 	pathGradeSubjectHandler := pathGradeSubjects.New(db.DB)
 
-	r.GET("/path-grade-subjects", pathGradeSubjectHandler.ListPathGradeSubjects)
-	r.GET("/path-grade-subject/:id", pathGradeSubjectHandler.GetPathGradeSubject)
+	authed.GET("/path-grade-subjects", pathGradeSubjectHandler.ListPathGradeSubjects)
+	authed.GET("/path-grade-subject/:id", pathGradeSubjectHandler.GetPathGradeSubject)
 
 	// path grge subject terms
 	pathGradeSubjectTermHandler := pathGradeSubjectTerm.New(db.DB)
 
-	r.GET("/path-grade-subject-terms", pathGradeSubjectTermHandler.ListPathGradeSubjectTerms)
-	r.GET("/path-grade-subject-term/:id", pathGradeSubjectTermHandler.GetPathGradeSubjectTerm)
+	authed.GET("/path-grade-subject-terms", pathGradeSubjectTermHandler.ListPathGradeSubjectTerms)
+	authed.GET("/path-grade-subject-term/:id", pathGradeSubjectTermHandler.GetPathGradeSubjectTerm)
 
 	// persons
 	personHandler := persons.New(db.DB, jwtSecret)
 
-	r.GET("/persons", personHandler.ListPersons)
-	r.GET("/person/:id", personHandler.GetPerson)
-	r.POST("/new-person", personHandler.Create)
+	authed.GET("/persons", personHandler.ListPersons)
+	authed.GET("/person/:id", personHandler.GetPerson)
+	authed.POST("/new-person", personHandler.Create)
 
 	// groups
 	groupHandler := groups.New(db.DB)
 
-	r.GET("/groups", groupHandler.ListGroups)
-	r.GET("/group/:id", groupHandler.GetGroup)
+	authed.GET("/groups", groupHandler.ListGroups)
+	authed.GET("/group/:id", groupHandler.GetGroup)
 
 	// authentication
 	// login is public: it issues the token required by
 	// every authenticated route below.
 	r.POST("/login", personHandler.Login)
 
-	// routes that require a valid JWT
-	authed := r.Group("/")
-	authed.Use(auth.JWTMiddleware(jwtSecret))
 	{
 		// logout: the token itself is stateless, so the
 		// client discards it after calling this route.
@@ -221,122 +226,122 @@ func main() {
 	// departments
 	departmentHandler := departments.New(db.DB)
 
-	r.GET("/departments", departmentHandler.ListDepartments)
-	r.GET("/department/:id", departmentHandler.GetDepartment)
+	authed.GET("/departments", departmentHandler.ListDepartments)
+	authed.GET("/department/:id", departmentHandler.GetDepartment)
 
 	// trainer subjects
 	trainerSubjectHandler := trainerSubjects.New(db.DB)
 
-	r.GET("/trainer-subjects", trainerSubjectHandler.ListTrainerSubjects)
-	r.GET("/trainer-subject/:id", trainerSubjectHandler.GetTrainerSubject)
+	authed.GET("/trainer-subjects", trainerSubjectHandler.ListTrainerSubjects)
+	authed.GET("/trainer-subject/:id", trainerSubjectHandler.GetTrainerSubject)
 
 	// learning terms
 	learningTermHandler := learningTerms.New(db.DB)
 
-	r.GET("/learning-terms", learningTermHandler.ListLearningTerms)
-	r.GET("/learning-term/:id", learningTermHandler.GetLearningTerm)
+	authed.GET("/learning-terms", learningTermHandler.ListLearningTerms)
+	authed.GET("/learning-term/:id", learningTermHandler.GetLearningTerm)
 
 	// rooms
 	roomHandler := trainingRooms.New(db.DB)
 
-	r.GET("/rooms", roomHandler.ListTrainingRooms)
-	r.GET("/room/:id", roomHandler.GetTrainingRoom)
+	authed.GET("/rooms", roomHandler.ListTrainingRooms)
+	authed.GET("/room/:id", roomHandler.GetTrainingRoom)
 
 	// courses
 	courseHandler := courses.New(db.DB)
 
-	r.GET("/courses", courseHandler.ListCourses)
-	r.GET("/course/:id", courseHandler.GetCourse)
+	authed.GET("/courses", courseHandler.ListCourses)
+	authed.GET("/course/:id", courseHandler.GetCourse)
 
 	// course sessions
 	courseSessionHandler := courseSessions.New(db.DB)
 
-	r.GET("/course-sessions", courseSessionHandler.ListCourseSessions)
-	r.GET("/course-session/:id", courseSessionHandler.GetCourseSession)
+	authed.GET("/course-sessions", courseSessionHandler.ListCourseSessions)
+	authed.GET("/course-session/:id", courseSessionHandler.GetCourseSession)
 
 	// documentation types
 	documentationTypeHandler := documentationType.New(db.DB)
 
-	r.GET("/documentation-types", documentationTypeHandler.ListDocTypes)
-	r.GET("/documentation-type/:id", documentationTypeHandler.GetDocType)
+	authed.GET("/documentation-types", documentationTypeHandler.ListDocTypes)
+	authed.GET("/documentation-type/:id", documentationTypeHandler.GetDocType)
 
 	// documentation
 	documentationHandler := documentations.New(db.DB)
 
-	r.GET("/documentations", documentationHandler.ListDocumentations)
-	r.GET("/documentation/:id", documentationHandler.GetDocumentation)
+	authed.GET("/documentations", documentationHandler.ListDocumentations)
+	authed.GET("/documentation/:id", documentationHandler.GetDocumentation)
 
 	// evaluation types
 	evaluationTypeHandler := evaluationType.New(db.DB)
 
-	r.GET("/evaluation-types", evaluationTypeHandler.ListEvaluationTypes)
-	r.GET("/evaluation-type/:id", evaluationTypeHandler.GetEvaluationType)
+	authed.GET("/evaluation-types", evaluationTypeHandler.ListEvaluationTypes)
+	authed.GET("/evaluation-type/:id", evaluationTypeHandler.GetEvaluationType)
 
 	// course participants
 	courseParticipantHandler := courseParticipants.New(db.DB)
 
-	r.GET("/course-participants", courseParticipantHandler.ListCourseParticipants)
-	r.GET("/course-participant/:id", courseParticipantHandler.GetCourseParticipant)
+	authed.GET("/course-participants", courseParticipantHandler.ListCourseParticipants)
+	authed.GET("/course-participant/:id", courseParticipantHandler.GetCourseParticipant)
 
 	// course session participants
 	courseSessionParticipantHandler := courseSessionParticipants.New(db.DB)
 
-	r.GET("/course-session-participants", courseSessionParticipantHandler.ListCourseSessionParticipants)
-	r.GET("/course-session-participant/:id", courseSessionParticipantHandler.GetCourseSessionParticipant)
+	authed.GET("/course-session-participants", courseSessionParticipantHandler.ListCourseSessionParticipants)
+	authed.GET("/course-session-participant/:id", courseSessionParticipantHandler.GetCourseSessionParticipant)
 
 	// course participant final exams
 	courseParticipantFinalExamHandler := courseParticipantFinalExam.New(db.DB)
 
-	r.GET("/course-participant-final-exams", courseParticipantFinalExamHandler.ListCourseParticipantsFinalExams)
-	r.GET("/course-participant-final-exam/:id", courseParticipantFinalExamHandler.GetCourseParticipantFinalExam)
+	authed.GET("/course-participant-final-exams", courseParticipantFinalExamHandler.ListCourseParticipantsFinalExams)
+	authed.GET("/course-participant-final-exam/:id", courseParticipantFinalExamHandler.GetCourseParticipantFinalExam)
 
 	// performance evaluation categories
 	performanceEvaluationCategoryHandler := performanceEvaluationCategories.New(db.DB)
 
-	r.GET("/performance-evaluation-categories", performanceEvaluationCategoryHandler.ListPerformanceEvaluationCategories)
-	r.GET("/performance-evaluation-category/:id", performanceEvaluationCategoryHandler.GetPerformanceEvaluationCategory)
+	authed.GET("/performance-evaluation-categories", performanceEvaluationCategoryHandler.ListPerformanceEvaluationCategories)
+	authed.GET("/performance-evaluation-category/:id", performanceEvaluationCategoryHandler.GetPerformanceEvaluationCategory)
 
 	// performance evaluation items
 	performanceEvaluationItemHandler := performanceEvaluationItems.New(db.DB)
 
-	r.GET("/performance-evaluation-items", performanceEvaluationItemHandler.ListPerformanceEvaluationItems)
-	r.GET("/performance-evaluation-item/:id", performanceEvaluationItemHandler.GetPerformanceEvaluationItem)
+	authed.GET("/performance-evaluation-items", performanceEvaluationItemHandler.ListPerformanceEvaluationItems)
+	authed.GET("/performance-evaluation-item/:id", performanceEvaluationItemHandler.GetPerformanceEvaluationItem)
 
 	// participant types
 	participantTypeHandler := participantType.New(db.DB)
 
-	r.GET("/participant-types", participantTypeHandler.ListParticipantTypes)
-	r.GET("/participant-type/:id", participantTypeHandler.GetParticipantType)
+	authed.GET("/participant-types", participantTypeHandler.ListParticipantTypes)
+	authed.GET("/participant-type/:id", participantTypeHandler.GetParticipantType)
 
 	// path grades
 	pathGradeHandler := pathGrades.New(db.DB)
 
-	r.GET("/path-grades", pathGradeHandler.ListPathGrades)
-	r.GET("/path-grade/:id", pathGradeHandler.GetPathGrade)
+	authed.GET("/path-grades", pathGradeHandler.ListPathGrades)
+	authed.GET("/path-grade/:id", pathGradeHandler.GetPathGrade)
 
 	// performance evaluation participant categories
 	performanceEvaluationParticipantCategoryHandler := performanceEvaluationParticipantCategory.New(db.DB)
 
-	r.GET("/performance-evaluation-participant-categories", performanceEvaluationParticipantCategoryHandler.ListPerformanceEvaluationParticipantCategories)
-	r.GET("/performance-evaluation-participant-category/:id", performanceEvaluationParticipantCategoryHandler.GetPerformanceEvaluationParticipantCategory)
+	authed.GET("/performance-evaluation-participant-categories", performanceEvaluationParticipantCategoryHandler.ListPerformanceEvaluationParticipantCategories)
+	authed.GET("/performance-evaluation-participant-category/:id", performanceEvaluationParticipantCategoryHandler.GetPerformanceEvaluationParticipantCategory)
 
 	// performance evaluation participant category items
 	performanceEvaluationParticipantCategoryItemHandler := performanceEvaluationParticipantCategoryItems.New(db.DB)
 
-	r.GET("/performance-evaluation-participant-category-items", performanceEvaluationParticipantCategoryItemHandler.ListPerformanceEvaluationParticipantCategoryItems)
-	r.GET("/performance-evaluation-participant-category-item/:id", performanceEvaluationParticipantCategoryItemHandler.GetPerformanceEvaluationParticipantCategoryItem)
+	authed.GET("/performance-evaluation-participant-category-items", performanceEvaluationParticipantCategoryItemHandler.ListPerformanceEvaluationParticipantCategoryItems)
+	authed.GET("/performance-evaluation-participant-category-item/:id", performanceEvaluationParticipantCategoryItemHandler.GetPerformanceEvaluationParticipantCategoryItem)
 
 	// performance evaluation course details
 	performanceEvaluationCourseDetailHandler := performanceEvaluationCourseDetails.New(db.DB)
 
-	r.GET("/performance-evaluation-course-details", performanceEvaluationCourseDetailHandler.ListPerformanceEvaluationCourseDetails)
-	r.GET("/performance-evaluation-course-detail/:id", performanceEvaluationCourseDetailHandler.GetPerformanceEvaluationCourseDetail)
+	authed.GET("/performance-evaluation-course-details", performanceEvaluationCourseDetailHandler.ListPerformanceEvaluationCourseDetails)
+	authed.GET("/performance-evaluation-course-detail/:id", performanceEvaluationCourseDetailHandler.GetPerformanceEvaluationCourseDetail)
 
 	// performance evaluation course participant details
 	performanceEvaluationCourseParticipantDetailHandler := performanceEvaluationCourseParticipantDetails.New(db.DB)
 
-	r.GET("/performance-evaluation-course-participant-details", performanceEvaluationCourseParticipantDetailHandler.ListPerformanceEvaluationCourseParticipantDetails)
-	r.GET("/performance-evaluation-course-participant-detail/:id", performanceEvaluationCourseParticipantDetailHandler.GetPerformanceEvaluationCourseParticipantDetail)
+	authed.GET("/performance-evaluation-course-participant-details", performanceEvaluationCourseParticipantDetailHandler.ListPerformanceEvaluationCourseParticipantDetails)
+	authed.GET("/performance-evaluation-course-participant-detail/:id", performanceEvaluationCourseParticipantDetailHandler.GetPerformanceEvaluationCourseParticipantDetail)
 
 	r.Run(":8000")
 }

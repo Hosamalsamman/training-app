@@ -25,8 +25,7 @@ func NewHandler(service *Service, secret string) *Handler {
 
 func (h *Handler) ListPersons(c *gin.Context) {
 
-	// TODO: replace with c.MustGet("clientID").(int)
-	clientID := 2
+	clientID := c.GetInt("client_id")
 
 	persons, err := h.service.GetAll(clientID)
 
@@ -50,8 +49,7 @@ func (h *Handler) GetPerson(c *gin.Context) {
 		return
 	}
 
-	// TODO: replace with c.MustGet("clientID").(int)
-	clientID := 2
+	clientID := c.GetInt("client_id")
 
 	person, err := h.service.GetByID(clientID, id)
 
