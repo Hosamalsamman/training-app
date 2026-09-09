@@ -252,6 +252,8 @@ func main() {
 
 	authed.GET("/courses", courseHandler.ListCourses)
 	authed.GET("/course/:id", courseHandler.GetCourse)
+	authed.POST("/new-course", courseHandler.CreateCourse)
+	authed.GET("/get-planned-courses", courseHandler.ListPlannedCourses)
 
 	// course sessions
 	courseSessionHandler := courseSessions.New(db.DB)

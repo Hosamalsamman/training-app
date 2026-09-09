@@ -43,7 +43,7 @@ type Course struct {
 
 	Cost decimal.Decimal `gorm:"column:cost;type:numeric(9,3);not null" json:"cost"`
 
-	IsPlanned  *bool `gorm:"column:is_palnned" json:"is_planned"`
+	IsPlanned  *bool `gorm:"column:is_planned" json:"is_planned"`
 	IsExecuted *bool `gorm:"column:is_executed" json:"is_executed"`
 
 	PlannedID *int     `gorm:"column:planned_id" json:"planned_id"`
@@ -59,4 +59,56 @@ type Course struct {
 	Documentations []Documentation `gorm:"foreignKey:CourseID" json:"documentations"`
 
 	Participants []CourseParticipant `gorm:"foreignKey:CourseID;references:ID" json:"participants"`
+}
+
+// CreateCourseRequest is the payload for POST /courses.
+// The service validates the two planning rules:
+//
+//  1. exactly one of the three subject identifiers is set,
+//  2. is_planned / is_executed / planned_id form one of the
+//     three valid course states.
+type CreateCourseRequest struct {
+	Name string `json:"name" binding:"required"`
+
+	// Exactly one of these three identifiers must be set.
+	PathGradeSubjectID     *int `json:"path_grade_subject_id"`
+	PathGradeSubjectTermID *int `json:"path_grade_subject_term_id"`
+	LearningSubjectID      *int `json:"learning_subject_id"`
+
+	DurationInDays int       `json:"duration_in_days" binding:"required,min=1"`
+	StartingDate   time.Time `json:"starting_date" binding:"required"`
+	EndDate        time.Time `json:"end_date"`
+
+	NumberOfInternalParticipants *int `json:"number_of_internal_participants"`
+	NumberOfExternalParticipants *int `json:"number_of_external_participants"`
+
+	RoomID    int `json:"room_id" binding:"required"`
+	TrainerID int `json:"trainer_id" binding:"required"`
+
+	FundingOrganizationID *int `json:"funding_organization_id"`
+	BackupTrainerID       *int `json:"backup_trainer_id"`
+	CoordinatorID         *int `json:"coordinator_id"`
+
+	Cost decimal.Decimal `json:"cost"`
+
+	// Lifecycle flags. Planned-not-executed,
+	// executed-not-planned or executed-from-planned.
+	IsPlanned  bool `json:"is_planned"`
+	IsExecuted bool `json:"is_executed"`
+
+	// Required only when the course is executed from a
+	// planned course (is_planned && is_executed). The new row
+	// carries the actual data, which may differ from the
+	// planned course it was executed from.
+	PlannedID *int `json:"planned_id"`
+}
+
+// CourseListFilters carries the optional query parameters of
+// GET /get-planned-courses. A nil field means the parameter
+// was not sent, so the repository adds no WHERE condition
+// for it.
+type CourseListFilters struct {
+	PathGradeSubjectID     *int
+	PathGradeSubjectTermID *int
+	LearningSubjectID      *int
 }
