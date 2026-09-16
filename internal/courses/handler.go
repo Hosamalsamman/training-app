@@ -161,6 +161,37 @@ func (h *Handler) ListPlannedCourses(c *gin.Context) {
 	c.JSON(http.StatusOK, courses)
 }
 
+// ListExecutedCourses handles GET /get-executed-courses. It
+// renders the client's executed courses (is_executed = true),
+// the only courses a session can be added to, so the frontend
+// picks from them when creating or updating a course session.
+// The subject query parameters are optional filters; when none
+// is sent, all executed courses are returned.
+func (h *Handler) ListExecutedCourses(c *gin.Context) {
+
+	filters, err := parseCourseListFilters(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	clientID := c.GetInt("client_id")
+
+	courses, err := h.service.GetExecuted(clientID, filters)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, courses)
+}
+
 // parseCourseListFilters reads the optional subject query
 // parameters. A parameter that was not sent stays nil so the
 // repository skips its WHERE condition; a non-integer value

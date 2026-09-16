@@ -143,6 +143,53 @@ func (r *Repository) GetAllPlanned(filters models.CourseListFilters) ([]models.C
 	return courses, err
 }
 
+// GetAllExecuted returns the client's executed courses
+// (is_executed = true), the only courses a session can be
+// added to, so the frontend renders them for the user to
+// choose from when creating or updating a course session.
+// Every filter is optional: a nil filter means the query
+// parameter was not sent, so no WHERE condition is added
+// for it.
+func (r *Repository) GetAllExecuted(filters models.CourseListFilters) ([]models.Course, error) {
+
+	var courses []models.Course
+
+	// Base condition: executed courses only. A planned
+	// course that has not been executed carries
+	// is_executed = false and is excluded by this flag.
+	q := r.db.Where("is_executed = ?", true)
+
+	// Each filter is applied only when the frontend sent it.
+	if filters.PathGradeSubjectID != nil {
+		q = q.Where("path_grade_subject_id = ?", *filters.PathGradeSubjectID)
+	}
+
+	if filters.PathGradeSubjectTermID != nil {
+		q = q.Where("path_grade_subject_term_id = ?", *filters.PathGradeSubjectTermID)
+	}
+
+	if filters.LearningSubjectID != nil {
+		q = q.Where("learning_subject_id = ?", *filters.LearningSubjectID)
+	}
+
+	err := q.
+		Preload("Client").
+		Preload("PathGradeSubject").
+		Preload("PathGradeSubjectTerm").
+		Preload("LearningSubject").
+		Preload("Room").
+		Preload("FundingOrganization").
+		Preload("Trainer").
+		Preload("BackupTrainer").
+		Preload("Coordinator").
+		Preload("Sessions").
+		Preload("Planned").
+		Preload("Documentations").
+		Find(&courses).Error
+
+	return courses, err
+}
+
 // Create inserts a new course. It only performs the INSERT;
 // the caller owns the transaction.
 func (r *Repository) Create(course *models.Course) error {

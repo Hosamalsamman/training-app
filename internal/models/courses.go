@@ -103,8 +103,9 @@ type CreateCourseRequest struct {
 	PlannedID *int `json:"planned_id"`
 }
 
-// CourseListFilters carries the optional query parameters of
-// GET /get-planned-courses. A nil field means the parameter
+// CourseListFilters carries the optional subject query
+// parameters of GET /get-planned-courses and
+// GET /get-executed-courses. A nil field means the parameter
 // was not sent, so the repository adds no WHERE condition
 // for it.
 type CourseListFilters struct {

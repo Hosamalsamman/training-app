@@ -63,6 +63,16 @@ func (s *Service) GetPlanned(clientID int, filters models.CourseListFilters) ([]
 	return repo.GetAllPlanned(filters)
 }
 
+// GetExecuted returns the client's executed courses
+// (is_executed = true), optionally narrowed by the subject
+// filters the frontend sent as query parameters. Sessions can
+// be added to executed courses only, so these are the courses
+// the frontend renders in the session course picker.
+func (s *Service) GetExecuted(clientID int, filters models.CourseListFilters) ([]models.Course, error) {
+	repo := s.repo.ForClient(clientID)
+	return repo.GetAllExecuted(filters)
+}
+
 // validateCreateRequest enforces the two business rules of
 // course planning without touching the database:
 //

@@ -254,12 +254,16 @@ func main() {
 	authed.GET("/course/:id", courseHandler.GetCourse)
 	authed.POST("/new-course", courseHandler.CreateCourse)
 	authed.GET("/get-planned-courses", courseHandler.ListPlannedCourses)
+	authed.GET("/get-executed-courses", courseHandler.ListExecutedCourses)
 
 	// course sessions
 	courseSessionHandler := courseSessions.New(db.DB)
 
 	authed.GET("/course-sessions", courseSessionHandler.ListCourseSessions)
 	authed.GET("/course-session/:id", courseSessionHandler.GetCourseSession)
+	authed.POST("/new-course-session", courseSessionHandler.CreateCourseSession)
+	authed.PUT("/course-session/:id", courseSessionHandler.UpdateCourseSession)
+	authed.DELETE("/course-session/:id", courseSessionHandler.DeleteCourseSession)
 
 	// documentation types
 	documentationTypeHandler := documentationType.New(db.DB)
