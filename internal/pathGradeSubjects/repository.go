@@ -64,6 +64,23 @@ func (r *Repository) GetByID(id int) (*models.PathGradeSubject, error) {
 	if err != nil {
 		return nil, err
 	}
+	return &pathGradeSubject, nil
+}
+
+// GetByIDPlain fetches a path grade subject by id without any
+// preloads. It is meant for validations that only need the
+// foreign keys of the row (path_grade_id), inside a
+// transaction. The repository must be client-scoped, so rows
+// of other clients are invisible here.
+func (r *Repository) GetByIDPlain(id int) (*models.PathGradeSubject, error) {
+
+	var pathGradeSubject models.PathGradeSubject
+
+	err := r.db.First(&pathGradeSubject, id).Error
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &pathGradeSubject, nil
 }

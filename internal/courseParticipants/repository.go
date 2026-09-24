@@ -61,3 +61,37 @@ func (r *Repository) GetByID(id int) (*models.CourseParticipant, error) {
 
 	return &courseParticipant, nil
 }
+
+// Create performs the INSERT only. It does not commit: it is
+// always called on a repository scoped to a transaction DB
+// (WithDB) so the caller decides the commit.
+func (r *Repository) Create(participant *models.CourseParticipant) error {
+	return r.db.Create(participant).Error
+}
+
+// Update performs a full UPDATE of the mutable participant
+// fields. It is always called on a client-scoped repository,
+// so the WHERE carries the client_id and the update cannot
+// cross tenants even if the id of another client's participant
+// was sent.
+func (r *Repository) Update(id int, participant *models.CourseParticipant) (int64, error) {
+
+	res := r.db.Model(&models.CourseParticipant{}).
+		Where("id = ?", id).
+		Updates(map[string]any{
+			"course_id": participant.CourseID,
+			"person_id": participant.PersonID,
+		})
+
+	return res.RowsAffected, res.Error
+}
+
+// Delete removes the participant by id. Like Update it is
+// always called on a client-scoped repository, so participants
+// of other clients are invisible to the WHERE clause.
+func (r *Repository) Delete(id int) (int64, error) {
+
+	res := r.db.Delete(&models.CourseParticipant{}, id)
+
+	return res.RowsAffected, res.Error
+}

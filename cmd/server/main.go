@@ -25,6 +25,7 @@ import (
 	"training-app/internal/organizations"
 	"training-app/internal/organizationtypes"
 	"training-app/internal/participantType"
+	pathGradeCandidate "training-app/internal/pathGradeCandidates"
 	pathGradeSubjectTerm "training-app/internal/pathGradeSubjectTerms"
 	"training-app/internal/pathGradeSubjects"
 	"training-app/internal/pathGrades"
@@ -181,6 +182,15 @@ func main() {
 	authed.GET("/path-grade-subject-terms", pathGradeSubjectTermHandler.ListPathGradeSubjectTerms)
 	authed.GET("/path-grade-subject-term/:id", pathGradeSubjectTermHandler.GetPathGradeSubjectTerm)
 
+	// path grade candidates
+	pathGradeCandidateHandler := pathGradeCandidate.New(db.DB)
+
+	authed.GET("/path-grade-candidates", pathGradeCandidateHandler.ListPathGradeCandidates)
+	authed.GET("/path-grade-candidate/:id", pathGradeCandidateHandler.GetPathGradeCandidate)
+	authed.POST("/new-path-grade-candidate", pathGradeCandidateHandler.Create)
+	authed.PUT("/path-grade-candidate/:id", pathGradeCandidateHandler.Update)
+	authed.DELETE("/path-grade-candidate/:id", pathGradeCandidateHandler.Delete)
+
 	// persons
 	personHandler := persons.New(db.DB, jwtSecret)
 
@@ -288,6 +298,9 @@ func main() {
 
 	authed.GET("/course-participants", courseParticipantHandler.ListCourseParticipants)
 	authed.GET("/course-participant/:id", courseParticipantHandler.GetCourseParticipant)
+	authed.POST("/new-course-participant", courseParticipantHandler.CreateCourseParticipant)
+	authed.PUT("/course-participant/:id", courseParticipantHandler.UpdateCourseParticipant)
+	authed.DELETE("/course-participant/:id", courseParticipantHandler.DeleteCourseParticipant)
 
 	// course session participants
 	courseSessionParticipantHandler := courseSessionParticipants.New(db.DB)
