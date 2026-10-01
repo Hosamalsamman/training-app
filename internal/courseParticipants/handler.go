@@ -101,7 +101,7 @@ func translateError(err error) (int, gin.H) {
 	// passed the path grade.
 	case errors.Is(err, ErrNotEligiblePathGradeCandidate):
 		return http.StatusBadRequest, gin.H{
-			"error": "لا يمكن إضافة الموظف كمشارك: يجب أن يكون مرشحاً لنفس درجة المسار (ولنفس الفصل الدراسي في مقررات فصل دراسي) ولم ينجح بها من قبل.",
+			"error": "لا يمكن إضافة الموظف كمشارك: يجب أن يكون مرشحاً لنفس درجة المسار (ولنفس نوع المدة في مقررات نصف المدة والمدة الكاملة) ولم ينجح بها من قبل.",
 		}
 
 	// Anything else is a database error.

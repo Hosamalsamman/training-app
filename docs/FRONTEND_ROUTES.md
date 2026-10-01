@@ -170,6 +170,30 @@ Business rules enforced server-side (mirror them in the form UI):
 
 ---
 
+### Course Session Participants (full CRUD)
+
+Attendance for a course session. A row references the
+enrollment (`course_participant_id`), so only participants
+enrolled in a course can be recorded, and the server rejects
+an enrollment of another course than the session's.
+
+| Method | Route | Model / Payload |
+|---|---|---|
+| GET | `/course-session-participants` | `models.CourseSessionParticipant` |
+| GET | `/course-session-participant/:id` | `models.CourseSessionParticipant` |
+| POST | `/new-course-session-participant` | `models.CourseSessionParticipantRequest` |
+| PUT | `/course-session-participant/:id` | `models.CourseSessionParticipantRequest` (full update) |
+| DELETE | `/course-session-participant/:id` | — |
+
+**POST/PUT** — dropdown sources:
+
+| Field | Render from | Route |
+|---|---|---|
+| `course_session_id` | `CourseSession.session_date` + times | `GET /course-sessions` |
+| `course_participant_id` | `CourseParticipant.person.name` (of the session's course) | `GET /course-participants` |
+
+---
+
 ### Read-only Domain Sections
 
 | Method | List route | Single route | Model |
@@ -177,7 +201,6 @@ Business rules enforced server-side (mirror them in the form UI):
 | GET | `/documentations` | `/documentation/:id` | `models.Documentation` |
 | GET | `/documentation-types` | `/documentation-type/:id` | `models.DocumentationType` |
 | GET | `/course-participants` | `/course-participant/:id` | `models.CourseParticipant` |
-| GET | `/course-session-participants` | `/course-session-participant/:id` | `models.CourseSessionParticipant` |
 | GET | `/course-participant-final-exams` | `/course-participant-final-exam/:id` | `models.CourseParticipantFinalExam` |
 | GET | `/performance-evaluation-categories` | `/performance-evaluation-category/:id` | `models.PerformanceEvaluationCategory` |
 | GET | `/performance-evaluation-items` | `/performance-evaluation-item/:id` | `models.PerformanceEvaluationItem` |
@@ -223,7 +246,7 @@ exactly what the frontend receives.
 - **Course** — `id`, `name`, `path_grade_subject_id` / `path_grade_subject_term_id` / `learning_subject_id` (exactly one), `duration_in_days`, `starting_date`, `end_date`, `number_of_internal_participants`, `number_of_external_participants`, `room_id`, `funding_organization_id`, `trainer_id`, `backup_trainer_id`, `coordinator_id`, `cost`, `is_planned`, `is_executed`, `planned_id`, `client_id`, `sessions[]`, `documentations[]`, `participants[]`
 - **CourseSession** — `id`, `session_date`, `start_time`, `end_time`, `course_id`, `client_id`
 - **CourseParticipant** — `id`, `course_id`, `person_id`, `client_id`, `final_exams[]`, `performance_evaluation_details[]`
-- **CourseSessionParticipant** — `id`, `course_session_id`, `person_id`, `client_id`
+- **CourseSessionParticipant** — `id`, `course_session_id`, `course_participant_id`, `client_id` (references the enrollment; the person comes nested as `course_participant.person`)
 - **CourseParticipantFinalExam** — `id`, `exam_date`, `organized_by`, `course_participant_id`, `documentation_id`, `exam_score`, `client_id`
 - **Documentation** — `id`, `name`, `file_path`, `documentation_type_id`, `learning_subject_id`, `path_grade_subject_id`, `path_grade_subject_term_id`, `course_id`, `course_session_id`, `client_id`
 - **DocumentationType** — `id`, `name`, `client_id`

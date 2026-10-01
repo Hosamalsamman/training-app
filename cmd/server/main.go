@@ -307,6 +307,9 @@ func main() {
 
 	authed.GET("/course-session-participants", courseSessionParticipantHandler.ListCourseSessionParticipants)
 	authed.GET("/course-session-participant/:id", courseSessionParticipantHandler.GetCourseSessionParticipant)
+	authed.POST("/new-course-session-participant", courseSessionParticipantHandler.CreateCourseSessionParticipant)
+	authed.PUT("/course-session-participant/:id", courseSessionParticipantHandler.UpdateCourseSessionParticipant)
+	authed.DELETE("/course-session-participant/:id", courseSessionParticipantHandler.DeleteCourseSessionParticipant)
 
 	// course participant final exams
 	courseParticipantFinalExamHandler := courseParticipantFinalExam.New(db.DB)
